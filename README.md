@@ -251,6 +251,20 @@ npm run dev
 
 ## What I'd Do Next
 
+### Next Feature (Highest Priority)
+
+- **🎯 Post timeline to YouTube comments** — After ending a game, add a "Post to YouTube" button that formats the event timeline as a YouTube comment with clickable timestamps. YouTube auto-links timestamps (e.g., `0:15`, `2:42`), so viewers can click them to jump directly to that moment in the video. Perfect for sharing film breakdowns with teammates or posting public game analyses.
+  - **Implementation requirements:**
+    - YouTube Data API v3 integration (comments.insert endpoint)
+    - OAuth 2.0 flow for YouTube authentication (`identity` permission in manifest)
+    - Format events as: `0:15 - #23 Cooper — 2PT Make` (one event per line)
+    - Handle YouTube API quota limits (10,000 units/day; comment insert = 50 units)
+    - Add "Post as [username]" confirmation dialog before posting
+    - Optional: Include game metadata header (opponent, date, final score)
+  - **Why this is valuable:** Turns private film study into shareable content. Coaches can post timestamped breakdowns for players to review. Teams can publish game highlights with play-by-play commentary. The extension becomes both a logging tool and a content creation tool.
+
+### Additional Enhancements
+
 - **Keyboard shortcuts** — Number keys 1–9 for quick event selection; arrow keys for undo/redo; enter to submit forms. The architecture already supports it (just map `keydown` events to button clicks), but v1 prioritizes mouse/touch workflows.
 
 - **Opponent roster tracking** — Right now opponent scoring is logged by jersey number only (no names, no full stat lines). Adding a second roster and treating opponent events the same as ours would enable full two-team box scores. The stats engine already handles per-player aggregation — it just needs a second roster entity and a "team" field on `GameEvent`.
