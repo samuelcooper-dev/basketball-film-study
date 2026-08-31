@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Basketball Film Study",
+  "version": "1.0.0",
+  "description": "Film study tool for logging basketball stats while watching YouTube game footage",
+  "permissions": [
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/watch*"],
+      "js": ["src/content/index.tsx"],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "src/extpage/index.html"
+  },
+  "action": {
+    "default_title": "Basketball Film Study"
+  },
+  "icons": {
+    "16": "public/icon16.png",
+    "48": "public/icon48.png",
+    "128": "public/icon128.png"
+  }
+}
