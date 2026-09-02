@@ -5,11 +5,15 @@ import { saveRoster } from '../lib/storage';
 
 interface RosterSetupProps {
   onRosterSaved: (roster: Roster) => void;
+  initialRoster?: Roster | null;
+  onCancel?: () => void;
 }
 
-function RosterSetup({ onRosterSaved }: RosterSetupProps) {
-  const [teamName, setTeamName] = useState('');
-  const [playersText, setPlayersText] = useState('');
+function RosterSetup({ onRosterSaved, initialRoster, onCancel }: RosterSetupProps) {
+  const [teamName, setTeamName] = useState(initialRoster?.teamName || '');
+  const [playersText, setPlayersText] = useState(
+    initialRoster?.players.map(p => `${p.number} ${p.name}`).join(', ') || ''
+  );
   const [error, setError] = useState('');
 
   function parseRoster(text: string): Player[] {
@@ -17,17 +21,22 @@ function RosterSetup({ onRosterSaved }: RosterSetupProps) {
     const lines = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
     for (const line of lines) {
-      const match = line.match(/^(\d+)\s+(.+)$/);
+      const trimmed = line.trim().replace(/\s+/g, ' '); // Normalize multiple spaces to single space
+      const match = trimmed.match(/^(\d+)\s+(.+)$/);
       if (match) {
         const number = match[1];
-        const name = match[2];
-        players.push({
-          id: uuidv4(),
-          number,
-          name
-        });
+        const name = match[2].trim();
+        if (name.length > 0) {
+          players.push({
+            id: uuidv4(),
+            number,
+            name
+          });
+        } else {
+          throw new Error(`Invalid format: "${line}". Name cannot be empty.`);
+        }
       } else {
-        throw new Error(`Invalid format: "${line}". Expected: "number name"`);
+        throw new Error(`Invalid format: "${line}". Expected format: "number name" (e.g., "23 Michael Jordan")`);
       }
     }
 
@@ -117,21 +126,39 @@ function RosterSetup({ onRosterSaved }: RosterSetupProps) {
         </div>
       )}
 
-      <button
-        onClick={handleSubmit}
-        style={{
-          padding: '10px 20px',
-          fontSize: '14px',
-          background: '#1976d2',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontWeight: 'bold'
-        }}
-      >
-        Save Roster
-      </button>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button
+          onClick={handleSubmit}
+          style={{
+            padding: '10px 20px',
+            fontSize: '14px',
+            background: '#1976d2',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          Save Roster
+        </button>
+        {onCancel && (
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '10px 20px',
+              fontSize: '14px',
+              background: '#757575',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </div>
   );
 }

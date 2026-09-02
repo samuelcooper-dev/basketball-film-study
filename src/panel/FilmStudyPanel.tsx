@@ -9,7 +9,7 @@ import {
   setCurrentGameId,
   getSettings
 } from '../lib/storage';
-import { Roster, Player, GameSession, GameEvent, EventType } from '../types';
+import { Roster, Player, GameSession, GameEvent, EventType, CourtZone, EventTag } from '../types';
 import RosterSetup from './RosterSetup';
 import GameHeader from './GameHeader';
 import OnCourtToggle from './OnCourtToggle';
@@ -28,6 +28,7 @@ function FilmStudyPanel() {
     capturedTimestamp: number;
   } | null>(null);
   const [undoStack, setUndoStack] = useState<GameEvent[]>([]);
+  const [showRosterSetup, setShowRosterSetup] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -111,29 +112,22 @@ function FilmStudyPanel() {
   async function handleEndGame() {
     if (!currentGame) return;
 
-    // Check if folder is set up
-    const settings = await getSettings();
-    if (!settings.hasDirectoryHandle) {
-      const shouldSetup = confirm(
-        'You need to set up an output folder first. Open the side panel to configure?'
-      );
-      if (shouldSetup) {
-        chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
-      }
-      return;
-    }
-
     const updatedGame = { ...currentGame, status: 'completed' as const };
     await saveGame(updatedGame);
     await setCurrentGameId(null);
 
-    // Request export via side panel
-    chrome.runtime.sendMessage({
-      type: 'REQUEST_EXPORT',
-      gameId: updatedGame.id
-    });
+    // Open side panel first, then request export
+    chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
 
-    alert('Game completed! Generating report in side panel...');
+    // Wait a moment for side panel to load, then send export request
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        type: 'REQUEST_EXPORT',
+        gameId: updatedGame.id
+      });
+    }, 500);
+
+    alert('Game completed! Opening side panel to generate report...');
     setCurrentGame(null);
     setOnCourtPlayerIds([]);
   }
@@ -164,6 +158,11 @@ function FilmStudyPanel() {
   }
 
   function handleEventButtonClick(eventType: EventType) {
+    // Require exactly 5 players on court before logging events
+    if (onCourtPlayerIds.length !== 5) {
+      alert(`Please select exactly 5 players on the court before logging events. (Currently: ${onCourtPlayerIds.length})`);
+      return;
+    }
     const capturedTimestamp = videoRef.current?.currentTime || 0;
     setActiveEventForm({ eventType, capturedTimestamp });
   }
@@ -174,7 +173,9 @@ function FilmStudyPanel() {
     primaryPlayerId: string | undefined,
     secondaryPlayerId: string | undefined,
     opponentNumber: string | undefined,
-    comment: string
+    comment: string,
+    location?: CourtZone,
+    tags?: EventTag[]
   ) {
     if (!currentGame) return;
 
@@ -187,7 +188,9 @@ function FilmStudyPanel() {
       secondaryPlayerId,
       opponentNumber,
       onCourtPlayerIds: [...onCourtPlayerIds],
-      comment
+      comment,
+      location,
+      tags
     };
 
     const updatedGame = {
@@ -231,8 +234,34 @@ function FilmStudyPanel() {
     }
   }
 
-  if (!roster) {
-    return <RosterSetup onRosterSaved={(r) => { setRosterState(r); loadRoster(); }} />;
+  function handleChangeRoster() {
+    if (currentGame) {
+      const confirmed = confirm(
+        'You have an active game in progress. Changing the roster may affect player tracking. Continue?'
+      );
+      if (!confirmed) return;
+    }
+    setShowRosterSetup(true);
+  }
+
+  function handleRosterSaved(r: Roster) {
+    setRosterState(r);
+    setShowRosterSetup(false);
+    loadRoster();
+  }
+
+  function handleCancelRosterSetup() {
+    setShowRosterSetup(false);
+  }
+
+  if (!roster || showRosterSetup) {
+    return (
+      <RosterSetup
+        onRosterSaved={handleRosterSaved}
+        initialRoster={roster}
+        onCancel={roster ? handleCancelRosterSetup : undefined}
+      />
+    );
   }
 
   return (
@@ -254,6 +283,27 @@ function FilmStudyPanel() {
 
       {!isCollapsed && (
         <div style={{ overflowY: 'auto', flex: 1, padding: '12px' }}>
+          {/* Roster Info & Change Button */}
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: '13px', color: '#666' }}>
+              <strong>{roster.teamName}</strong> ({roster.players.length} players)
+            </div>
+            <button
+              onClick={handleChangeRoster}
+              style={{
+                padding: '4px 8px',
+                fontSize: '11px',
+                background: '#f5f5f5',
+                color: '#333',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              Change Roster
+            </button>
+          </div>
+
           <GameHeader
             currentGame={currentGame}
             currentTimestamp={currentTimestamp}
@@ -276,6 +326,7 @@ function FilmStudyPanel() {
                   eventType={activeEventForm.eventType}
                   capturedTimestamp={activeEventForm.capturedTimestamp}
                   roster={roster}
+                  onCourtPlayerIds={onCourtPlayerIds}
                   onSubmit={handleEventSubmit}
                   onCancel={handleEventFormCancel}
                 />

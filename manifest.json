@@ -5,7 +5,11 @@
   "description": "Film study tool for logging basketball stats while watching YouTube game footage",
   "permissions": [
     "storage",
-    "sidePanel"
+    "sidePanel",
+    "downloads",
+    "scripting",
+    "tabs",
+    "activeTab"
   ],
   "host_permissions": [
     "*://*.youtube.com/*"

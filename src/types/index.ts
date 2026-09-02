@@ -18,6 +18,32 @@ export type EventType =
   | "OPP_SCORE_2" | "OPP_SCORE_3" | "OPP_SCORE_FT"
   | "CUSTOM";
 
+export type CourtZone =
+  | 'paint'
+  | 'midrange_left'
+  | 'midrange_right'
+  | 'corner3_left'
+  | 'corner3_right'
+  | 'wing3_left'
+  | 'wing3_right'
+  | 'top3'
+  | 'baseline_left'
+  | 'baseline_right'
+  | 'unknown';
+
+export type EventTag =
+  | 'baseline_drive'
+  | 'help_defense'
+  | 'transition'
+  | 'fast_break'
+  | 'pick_and_roll'
+  | 'isolation'
+  | 'off_screen'
+  | 'putback'
+  | 'and1'
+  | 'technical'
+  | 'intentional';
+
 export interface GameEvent {
   id: string;
   timestampSec: number;
@@ -28,6 +54,10 @@ export interface GameEvent {
   opponentNumber?: string;
   onCourtPlayerIds: string[];
   comment: string;
+
+  // Court tracking fields
+  location?: CourtZone;
+  tags?: EventTag[];
 }
 
 export interface LineupChange {
@@ -83,5 +113,5 @@ export interface GameStats {
 }
 
 export interface AppSettings {
-  hasDirectoryHandle: boolean;
+  downloadFolder?: string;
 }

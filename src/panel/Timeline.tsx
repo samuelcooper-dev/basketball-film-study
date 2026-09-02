@@ -1,5 +1,7 @@
 import React from 'react';
 import { GameEvent, Roster } from '../types';
+import MiniCourt from '../components/MiniCourt';
+import { ZONE_LABELS } from '../components/CourtDiagram';
 
 interface TimelineProps {
   events: GameEvent[];
@@ -45,64 +47,79 @@ function Timeline({ events, roster, onSeek, onDelete }: TimelineProps) {
               padding: '8px',
               borderBottom: '1px solid #eee',
               fontSize: '12px',
-              background: '#fafafa'
+              background: '#fafafa',
+              display: 'flex',
+              gap: '8px'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <button
-                onClick={() => onSeek(event.timestampSec)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#1976d2',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  padding: 0,
-                  textDecoration: 'underline'
-                }}
-              >
-                {formatTimestamp(event.timestampSec)}
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm('Delete this event?')) {
-                    onDelete(event.id);
-                  }
-                }}
-                style={{
-                  background: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '3px',
-                  padding: '2px 6px',
-                  fontSize: '10px',
-                  cursor: 'pointer'
-                }}
-              >
-                Delete
-              </button>
+            {/* Mini court diagram */}
+            <div style={{ flexShrink: 0 }}>
+              <MiniCourt zone={event.location} eventType={event.eventType} />
             </div>
 
-            <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '2px' }}>
-              {event.eventType.replace(/_/g, ' ')}
-            </div>
-
-            {event.primaryPlayerId && (
-              <div style={{ color: '#666', fontSize: '11px' }}>
-                {getPlayerName(event.primaryPlayerId)}
-                {event.secondaryPlayerId && ` + ${getPlayerName(event.secondaryPlayerId)}`}
+            {/* Event details */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <button
+                  onClick={() => onSeek(event.timestampSec)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#1976d2',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    padding: 0,
+                    textDecoration: 'underline'
+                  }}
+                >
+                  {formatTimestamp(event.timestampSec)}
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('Delete this event?')) {
+                      onDelete(event.id);
+                    }
+                  }}
+                  style={{
+                    background: '#f44336',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    padding: '2px 6px',
+                    fontSize: '10px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Delete
+                </button>
               </div>
-            )}
 
-            {event.opponentNumber && (
-              <div style={{ color: '#666', fontSize: '11px' }}>
-                Opp #{event.opponentNumber}
+              <div style={{ fontWeight: 'bold', color: '#333', marginBottom: '2px' }}>
+                {event.eventType.replace(/_/g, ' ')}
+                {event.location && event.location !== 'unknown' && (
+                  <span style={{ color: '#3498db', fontSize: '10px', marginLeft: '6px' }}>
+                    @ {ZONE_LABELS[event.location]}
+                  </span>
+                )}
               </div>
-            )}
 
-            <div style={{ color: '#555', marginTop: '4px', fontSize: '11px', fontStyle: 'italic' }}>
-              {event.comment}
+              {event.primaryPlayerId && (
+                <div style={{ color: '#666', fontSize: '11px' }}>
+                  {getPlayerName(event.primaryPlayerId)}
+                  {event.secondaryPlayerId && ` + ${getPlayerName(event.secondaryPlayerId)}`}
+                </div>
+              )}
+
+              {event.opponentNumber && (
+                <div style={{ color: '#666', fontSize: '11px' }}>
+                  Opp #{event.opponentNumber}
+                </div>
+              )}
+
+              <div style={{ color: '#555', marginTop: '4px', fontSize: '11px', fontStyle: 'italic' }}>
+                {event.comment}
+              </div>
             </div>
           </div>
         ))}

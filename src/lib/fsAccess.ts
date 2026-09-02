@@ -4,6 +4,13 @@ import { SeasonStatRow } from './stats';
 
 export async function setupDirectoryAccess(): Promise<FileSystemDirectoryHandle | null> {
   try {
+    // Check if the API is available
+    if (!('showDirectoryPicker' in window)) {
+      console.error('File System Access API not available in this context');
+      alert('File System Access API is not available. This feature requires a Chromium-based browser (Chrome, Edge) version 86 or later.');
+      return null;
+    }
+
     const handle = await (window as any).showDirectoryPicker({
       mode: 'readwrite',
       startIn: 'documents'
@@ -13,6 +20,13 @@ export async function setupDirectoryAccess(): Promise<FileSystemDirectoryHandle 
     return handle;
   } catch (err) {
     console.error('Directory picker error:', err);
+    console.error('Error name:', (err as Error).name);
+    console.error('Error message:', (err as Error).message);
+
+    // Show user-friendly error
+    if ((err as Error).name !== 'AbortError') {
+      alert(`Error opening folder picker: ${(err as Error).message}\n\nPlease check the browser console for details.`);
+    }
     return null;
   }
 }
