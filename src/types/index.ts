@@ -13,7 +13,7 @@ export type EventType =
   | "2PT_MAKE" | "2PT_MISS" | "3PT_MAKE" | "3PT_MISS"
   | "FT_MAKE" | "FT_MISS"
   | "REB_OFF" | "REB_DEF"
-  | "ASSIST" | "TURNOVER" | "STEAL" | "BLOCK" | "FOUL"
+  | "ASSIST" | "SCREEN_ASSIST" | "TURNOVER" | "STEAL" | "BLOCK" | "FOUL"
   | "DEFLECTION" | "CHARGE_TAKEN" | "BLOWN_COVERAGE" | "HELP_D_BREAKDOWN"
   | "OPP_SCORE_2" | "OPP_SCORE_3" | "OPP_SCORE_FT"
   | "CUSTOM";
@@ -94,6 +94,7 @@ export interface PlayerGameStats {
   rebOff: number;
   rebDef: number;
   assists: number;
+  screenAssists: number;
   turnovers: number;
   steals: number;
   blocks: number;

@@ -36,9 +36,9 @@ export async function generatePDFFromHTML(
   const options = {
     margin: 0,
     filename: `${roster.teamName}_vs_${game.opponentName}_${game.date}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { type: 'jpeg' as const, quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
   };
 
   return html2pdf().set(options).from(htmlContent).outputPdf('blob');
@@ -281,7 +281,7 @@ function generateTeamShotChartPage(
 ): string {
   const offensiveShotChart = generateShotChartSVG(analytics.offense?.byZone || analytics.teamZoneStats, game.courtType || 'highschool');
   const defensiveShotChart = generateDefensiveShotChartSVG(analytics.defense?.byZone || {}, game.courtType || 'highschool');
-  const timeline = generateTimeline(game);
+  const timeline = generateTimeline(game, roster);
 
   return `
     <div class="page">
@@ -337,7 +337,7 @@ function generateShotChartSVG(
   courtType: 'nba' | 'highschool'
 ): string {
   // NBA zone paths
-  const NBA_ZONES = {
+  const NBA_ZONES: Record<CourtZone, string> = {
     restricted_area: 'M210,0 L210,52.5 A40,40 0 0 1 290,52.5 L290,0 Z',
     paint: 'M170,0 L330,0 L330,190 L170,190 Z',
     left_baseline_mid: 'M30,0 L170,0 L170,142 L30,142 Z',
@@ -351,6 +351,7 @@ function generateShotChartSVG(
     left_corner_3: 'M0,0 L30,0 L30,142 L0,142 Z',
     right_corner_3: 'M470,0 L500,0 L500,142 L470,142 Z',
     deep_3_logo: 'M0,340 L500,340 L500,470 L0,470 Z',
+    unknown: '', // Fallback for unknown zones
   };
 
   const zoneOrder: CourtZone[] = [
@@ -369,9 +370,9 @@ function generateShotChartSVG(
     let fill = '#2c2a3a'; // No attempts
     let countText = '';
 
-    if (stats && stats.attempts > 0) {
-      fill = getHSLColorForPercentage(stats.percentage);
-      countText = `${stats.made}-${stats.attempts}`;
+    if (stats && stats.fga > 0) {
+      fill = getHSLColorForPercentage(stats.fgPct);
+      countText = `${stats.fgm}-${stats.fga}`;
     }
 
     zonePaths += `<path d="${path}" fill="${fill}" fill-opacity="0.8" stroke="#000" stroke-width="1"></path>`;
@@ -428,14 +429,14 @@ function getZoneLabelPosition(zone: CourtZone): { x: number; y: number } {
  */
 function generateZoneStatsTable(zoneStats: Record<CourtZone, ZoneStats>): string {
   const sortedZones = Object.entries(zoneStats)
-    .filter(([_, stats]) => stats.attempts > 0)
-    .sort((a, b) => b[1].attempts - a[1].attempts);
+    .filter(([_, stats]) => stats.fga > 0)
+    .sort((a, b) => b[1].fga - a[1].fga);
 
   const rows = sortedZones.map(([zone, stats]) => `
     <tr>
       <td>${ZONE_LABELS[zone as CourtZone]}</td>
-      <td>${stats.made}-${stats.attempts}</td>
-      <td>${Math.round(stats.percentage)}%</td>
+      <td>${stats.fgm}-${stats.fga}</td>
+      <td>${Math.round(stats.fgPct)}%</td>
     </tr>
   `).join('');
 
@@ -455,7 +456,7 @@ function generateDefensiveShotChartSVG(
   courtType: 'nba' | 'highschool'
 ): string {
   // NBA zone paths (same as offensive chart)
-  const NBA_ZONES = {
+  const NBA_ZONES: Record<CourtZone, string> = {
     restricted_area: 'M210,0 L210,52.5 A40,40 0 0 1 290,52.5 L290,0 Z',
     paint: 'M170,0 L330,0 L330,190 L170,190 Z',
     left_baseline_mid: 'M30,0 L170,0 L170,142 L30,142 Z',
@@ -469,6 +470,7 @@ function generateDefensiveShotChartSVG(
     left_corner_3: 'M0,0 L30,0 L30,142 L0,142 Z',
     right_corner_3: 'M470,0 L500,0 L500,142 L470,142 Z',
     deep_3_logo: 'M0,340 L500,340 L500,470 L0,470 Z',
+    unknown: '', // Fallback for unknown zones
   };
 
   const zoneOrder: CourtZone[] = [
@@ -538,12 +540,12 @@ function generateInsights(game: GameSession, analytics: any): string {
   // Find most attempted zone
   const zoneEntries = Object.entries(analytics.teamZoneStats) as [CourtZone, ZoneStats][];
   const mostAttempts = zoneEntries
-    .filter(([_, stats]) => stats.attempts > 0)
-    .sort((a, b) => b[1].attempts - a[1].attempts)[0];
+    .filter(([_, stats]) => stats.fga > 0)
+    .sort((a, b) => b[1].fga - a[1].fga)[0];
 
   if (mostAttempts) {
     const [zone, stats] = mostAttempts;
-    insights.push(`Most attempts came from ${ZONE_LABELS[zone]} (${stats.attempts} attempts, ${stats.made}-${stats.attempts}).`);
+    insights.push(`Most attempts came from ${ZONE_LABELS[zone]} (${stats.fga} attempts, ${stats.fgm}-${stats.fga}).`);
   }
 
   return '<ul>' + insights.map(i => `<li>${i}</li>`).join('') + '</ul>';
@@ -552,7 +554,7 @@ function generateInsights(game: GameSession, analytics: any): string {
 /**
  * Generate timeline with YouTube links
  */
-function generateTimeline(game: GameSession): string {
+function generateTimeline(game: GameSession, roster: Roster): string {
   if (!game.events || game.events.length === 0) {
     return '<div style="padding:12px; color:var(--text-dim);">No events logged yet.</div>';
   }
@@ -564,7 +566,15 @@ function generateTimeline(game: GameSession): string {
     const timestampSeconds = Math.floor(event.timestampSec);
     const youtubeLink = `https://www.youtube.com/watch?v=${videoId}&t=${timestampSeconds}s`;
 
-    const playerName = event.playerNumber ? `#${event.playerNumber}` : 'Team';
+    // Look up player from roster using primaryPlayerId
+    let playerName = 'Team';
+    if (event.primaryPlayerId) {
+      const player = roster.players.find(p => p.id === event.primaryPlayerId);
+      if (player) {
+        playerName = `#${player.number} ${player.name}`;
+      }
+    }
+
     const description = formatEventDescription(event);
     const points = calculateEventPoints(event);
 

@@ -338,8 +338,8 @@ function CourtDiagram({
               L ${basketX - cornerDistance} ${COURT_LENGTH}
               L ${basketX - cornerDistance} ${cornerY}
               Z`}
-          {...getZoneStyle('midrange_left')}
-          onClick={() => handleZoneClick('midrange_left')}
+          {...getZoneStyle('left_elbow_mid')}
+          onClick={() => handleZoneClick('left_elbow_mid')}
         />
 
         {/* Mid-range Right - between paint and 3pt line on right */}
@@ -351,8 +351,8 @@ function CourtDiagram({
               L ${basketX + cornerDistance} ${COURT_LENGTH}
               L ${basketX + cornerDistance} ${cornerY}
               Z`}
-          {...getZoneStyle('midrange_right')}
-          onClick={() => handleZoneClick('midrange_right')}
+          {...getZoneStyle('right_elbow_mid')}
+          onClick={() => handleZoneClick('right_elbow_mid')}
         />
 
         {/* Corner 3 Left - below the break on left side */}
@@ -361,8 +361,8 @@ function CourtDiagram({
           y={cornerY}
           width={basketX - cornerDistance}
           height={COURT_LENGTH - cornerY}
-          {...getZoneStyle('corner3_left')}
-          onClick={() => handleZoneClick('corner3_left')}
+          {...getZoneStyle('left_corner_3')}
+          onClick={() => handleZoneClick('left_corner_3')}
         />
 
         {/* Corner 3 Right - below the break on right side */}
@@ -371,8 +371,8 @@ function CourtDiagram({
           y={cornerY}
           width={basketX - cornerDistance}
           height={COURT_LENGTH - cornerY}
-          {...getZoneStyle('corner3_right')}
-          onClick={() => handleZoneClick('corner3_right')}
+          {...getZoneStyle('right_corner_3')}
+          onClick={() => handleZoneClick('right_corner_3')}
         />
 
         {/* Wing 3 Left - left wing above break */}
@@ -382,8 +382,8 @@ function CourtDiagram({
               L ${(COURT_WIDTH - PAINT_WIDTH) / 2} ${COURT_LENGTH - FREE_THROW_LINE}
               L ${basketX - cornerDistance} ${COURT_LENGTH - FREE_THROW_LINE}
               Z`}
-          {...getZoneStyle('wing3_left')}
-          onClick={() => handleZoneClick('wing3_left')}
+          {...getZoneStyle('left_wing_3')}
+          onClick={() => handleZoneClick('left_wing_3')}
         />
 
         {/* Wing 3 Right - right wing above break */}
@@ -393,8 +393,8 @@ function CourtDiagram({
               L ${(COURT_WIDTH + PAINT_WIDTH) / 2} ${COURT_LENGTH - FREE_THROW_LINE}
               L ${basketX + cornerDistance} ${COURT_LENGTH - FREE_THROW_LINE}
               Z`}
-          {...getZoneStyle('wing3_right')}
-          onClick={() => handleZoneClick('wing3_right')}
+          {...getZoneStyle('right_wing_3')}
+          onClick={() => handleZoneClick('right_wing_3')}
         />
 
         {/* Top 3 - top of key beyond arc */}
@@ -406,8 +406,8 @@ function CourtDiagram({
               L ${basketX - 80} ${basketY - THREE_POINT_RADIUS}
               A ${THREE_POINT_RADIUS} ${THREE_POINT_RADIUS} 0 0 0 0 ${basketY - THREE_POINT_RADIUS}
               Z`}
-          {...getZoneStyle('top3')}
-          onClick={() => handleZoneClick('top3')}
+          {...getZoneStyle('top_key_3')}
+          onClick={() => handleZoneClick('top_key_3')}
         />
 
         {/* Baseline Left - short corner inside 3pt */}
@@ -416,8 +416,8 @@ function CourtDiagram({
           y={cornerY}
           width={(COURT_WIDTH - PAINT_WIDTH) / 2 - (basketX - cornerDistance)}
           height={COURT_LENGTH - cornerY}
-          {...getZoneStyle('baseline_left')}
-          onClick={() => handleZoneClick('baseline_left')}
+          {...getZoneStyle('left_baseline_mid')}
+          onClick={() => handleZoneClick('left_baseline_mid')}
         />
 
         {/* Baseline Right - short corner inside 3pt */}
@@ -426,8 +426,8 @@ function CourtDiagram({
           y={cornerY}
           width={(basketX + cornerDistance) - (COURT_WIDTH + PAINT_WIDTH) / 2}
           height={COURT_LENGTH - cornerY}
-          {...getZoneStyle('baseline_right')}
-          onClick={() => handleZoneClick('baseline_right')}
+          {...getZoneStyle('right_baseline_mid')}
+          onClick={() => handleZoneClick('right_baseline_mid')}
         />
 
         {/* Zone Labels */}
