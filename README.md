@@ -228,8 +228,8 @@ Data entry mistakes happen — a coach might click the wrong player and then cli
 
 ```bash
 # 1. Clone and install
-git clone <repo-url>
-cd basketball-film-tool
+git clone https://github.com/samuelcooper-dev/basketball-wizard.git
+cd basketball-wizard
 npm install
 
 # 2. Build for production

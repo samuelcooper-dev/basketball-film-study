@@ -1,8 +1,8 @@
 {
-  "name": "basketball-film-tool",
+  "name": "basketball-wizard",
   "version": "1.0.0",
   "type": "module",
-  "description": "Chrome extension for basketball film study on YouTube",
+  "description": "Basketball Wizard - Advanced basketball analytics Chrome extension for YouTube",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
