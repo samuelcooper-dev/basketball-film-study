@@ -267,16 +267,28 @@ npm run dev
 # Changes to src/ auto-rebuild
 ```
 
-## Local Testing Workflow
+## Using the Extension
 
-1. Navigate to any YouTube video
-2. The Basketball Wizard panel appears on the right
-3. Set up roster (one-time)
-4. Start a game (opponent name + date)
-5. Toggle 5 players "on court"
-6. Click event buttons and fill out forms
-7. Check the timeline — click timestamps to seek video
-8. Click "End Game" → side panel opens → PDF + CSV saved to your folder
+### Panel Activation
+
+The Basketball Wizard panel uses a **smart auto-show** approach:
+
+- **Auto-shows:** Panel automatically appears when you navigate to a YouTube video (`youtube.com/watch?v=...`)
+- **Auto-hides:** Panel automatically disappears when you leave the video page
+- **Manual toggle:** Click the Basketball Wizard extension icon in Chrome toolbar to hide/show the panel anytime
+
+This gives you zero-friction access while allowing you to hide the panel when needed.
+
+### Local Testing Workflow
+
+1. Navigate to any YouTube video → **Panel auto-appears on the right**
+2. First time only: Set up roster (paste comma-separated player list)
+3. Start a game (opponent name + date)
+4. Toggle 5 players "on court"
+5. Click event buttons and fill out forms
+6. Check the timeline — click timestamps to seek video
+7. Click "End Game" → side panel opens → PDF + CSV saved to your folder
+8. **To hide panel:** Click the extension icon in Chrome toolbar
 
 ## What I'd Do Next
 
