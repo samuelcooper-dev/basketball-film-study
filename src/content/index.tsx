@@ -218,17 +218,6 @@ function initialize() {
   log('Content script ready and listening for messages');
 }
 
-// Export onExecute for CRXJS loader
-export function onExecute() {
-  log('onExecute called by CRXJS');
-  initialize();
-  checkForVideoChange(); // Auto-inject on first load
-}
-
-// Also initialize immediately (for manual/unpacked loading)
-log('Content script module loaded');
-initialize();
-
 // Auto-inject panel when YouTube video is detected
 let currentVideoId: string | null = null;
 
@@ -246,6 +235,17 @@ function checkForVideoChange() {
     hidePanel(); // Hide panel when leaving video
   }
 }
+
+// Export onExecute for CRXJS loader
+export function onExecute() {
+  log('onExecute called by CRXJS');
+  initialize();
+  checkForVideoChange(); // Auto-inject on first load
+}
+
+// Also initialize immediately (for manual/unpacked loading)
+log('Content script module loaded');
+initialize();
 
 // Initial check
 checkForVideoChange();
