@@ -222,8 +222,39 @@ function initialize() {
 export function onExecute() {
   log('onExecute called by CRXJS');
   initialize();
+  checkForVideoChange(); // Auto-inject on first load
 }
 
 // Also initialize immediately (for manual/unpacked loading)
 log('Content script module loaded');
 initialize();
+
+// Auto-inject panel when YouTube video is detected
+let currentVideoId: string | null = null;
+
+function checkForVideoChange() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const videoId = urlParams.get('v');
+
+  if (videoId && videoId !== currentVideoId) {
+    log('Video detected:', videoId);
+    currentVideoId = videoId;
+    showPanel(); // Auto-show panel on new video
+  } else if (!videoId && currentVideoId) {
+    log('Left video page');
+    currentVideoId = null;
+    hidePanel(); // Hide panel when leaving video
+  }
+}
+
+// Initial check
+checkForVideoChange();
+
+// Listen for YouTube SPA navigation
+window.addEventListener('yt-navigate-finish', () => {
+  log('YouTube navigation detected');
+  checkForVideoChange();
+});
+
+// Fallback: poll for URL changes (YouTube's SPA can be finicky)
+setInterval(checkForVideoChange, 1000);

@@ -29,7 +29,7 @@
     "default_path": "src/extpage/index.html"
   },
   "action": {
-    "default_title": "Basketball Wizard"
+    "default_title": "Toggle Basketball Wizard Panel"
   },
   "icons": {
     "16": "public/toolbar-icon-16-flat.png",
