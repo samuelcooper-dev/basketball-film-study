@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Basketball Film Study",
+  "name": "Basketball Wizard",
   "version": "1.0.0",
-  "description": "Film study tool for logging basketball stats while watching YouTube game footage",
+  "description": "Advanced basketball analytics tool for logging stats and generating insights while watching YouTube game footage",
   "permissions": [
     "storage",
     "sidePanel",
@@ -29,11 +29,11 @@
     "default_path": "src/extpage/index.html"
   },
   "action": {
-    "default_title": "Basketball Film Study"
+    "default_title": "Basketball Wizard"
   },
   "icons": {
-    "16": "public/icon16.png",
-    "48": "public/icon48.png",
-    "128": "public/icon128.png"
+    "16": "public/toolbar-icon-16-flat.png",
+    "48": "public/icon-48.png",
+    "128": "public/icon-128.png"
   }
 }

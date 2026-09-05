@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>13-Zone Shot Chart — DEMO</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --panel: #12121a;
+      --border: #22222e;
+      --cyan: #00ffff;
+      --cyan-dim: rgba(0,255,255,0.12);
+      --cyan-hover: rgba(0,255,255,0.28);
+      --made: #00ffc8;
+      --missed: #ff2e6a;
+      --text: #d8f9ff;
+      --subtext: #6f8f95;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+    .wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 22px 16px 50px;
+    }
+    h1 {
+      font-size: 1.15rem;
+      text-align: center;
+      margin: 0 0 4px;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 8px var(--cyan);
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--subtext);
+      font-size: 0.8rem;
+      margin: 0 0 18px;
+    }
+    .toggle-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .toggle-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .toggle-btn.active {
+      color: var(--bg);
+      background: var(--cyan);
+      box-shadow: 0 0 14px var(--cyan);
+      border-color: var(--cyan);
+    }
+    .court-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    svg { width: 100%; height: auto; display: block; }
+    .chart-svg { display: none; }
+    .chart-svg.active { display: block; }
+
+    .court-line {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 1.6;
+      opacity: 0.85;
+      filter: url(#cyanGlow);
+    }
+    .court-fill { fill: #0d0d14; }
+
+    .zone {
+      fill: var(--cyan-dim);
+      stroke: var(--cyan);
+      stroke-width: 1;
+      stroke-opacity: 0.55;
+      cursor: pointer;
+      transition: fill 0.15s ease, stroke-opacity 0.15s ease;
+    }
+    .zone:hover {
+      fill: var(--cyan-hover);
+      stroke-opacity: 1;
+    }
+    .zone.state-made {
+      fill: rgba(0,255,200,0.38);
+      stroke: var(--made);
+      stroke-opacity: 1;
+      filter: url(#cyanGlow);
+    }
+    .zone.state-missed {
+      fill: rgba(255,46,106,0.28);
+      stroke: var(--missed);
+      stroke-opacity: 1;
+    }
+
+    .zone-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      fill: var(--text);
+      text-anchor: middle;
+      pointer-events: none;
+      opacity: 0.85;
+      letter-spacing: 0.02em;
+    }
+    .zone-label.hs-label {
+      font-size: 8.5px;
+      letter-spacing: 0.01em;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 14px;
+      font-size: 0.72rem;
+      color: var(--subtext);
+    }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+    .hint {
+      text-align: center;
+      color: var(--subtext);
+      font-size: 0.72rem;
+      margin-top: 10px;
+    }
+
+    .code-note {
+      margin-top: 26px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.78rem;
+      color: var(--subtext);
+      line-height: 1.5;
+    }
+    .code-note code {
+      color: var(--cyan);
+    }
+    .success-banner {
+      background: linear-gradient(135deg, #1E3A20 0%, #2A2A2A 100%);
+      border-left: 5px solid #10B981;
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      color: #10B981;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="success-banner">
+    ✓ SUCCESS! Your 13-zone shot chart SVG is now integrated into the Basketball Film Tool!
+  </div>
+
+  <h1>◈ SHOT CHART — 13 ZONES ◈</h1>
+  <p class="subtitle">NBA and High School dimensions · click a zone to cycle demo state</p>
+
+  <div class="toggle-row">
+    <button class="toggle-btn active" data-target="nba">NBA</button>
+    <button class="toggle-btn" data-target="hs">HIGH SCHOOL</button>
+  </div>
+
+  <div class="court-container">
+
+    <!-- ============================================================ -->
+    <!-- NBA VERSION — paint 16ft wide, 3PT corner 22ft / arc 23.75ft -->
+    <!-- ============================================================ -->
+    <svg class="chart-svg active" id="chart-nba" viewBox="0 0 500 470" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="cyanGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.2" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <rect class="court-fill" x="0" y="0" width="500" height="470"></rect>
+
+      <!-- court reference lines (decorative) -->
+      <rect class="court-line" x="1" y="1" width="498" height="468"></rect>
+      <rect class="court-line" x="170" y="0" width="160" height="190"></rect>
+      <circle class="court-line" cx="250" cy="190" r="60" stroke-dasharray="3 4"></circle>
+      <circle class="court-line" cx="250" cy="52.5" r="7.5"></circle>
+      <line class="court-line" x1="220" y1="40" x2="280" y2="40"></line>
+      <line class="court-line" x1="0" y1="470" x2="500" y2="470" stroke-dasharray="3 4"></line>
+      <circle class="court-line" cx="250" cy="470" r="45" stroke-dasharray="3 4"></circle>
+
+      <!-- 13 interactive zones -->
+      <g id="zonesNBA">
+        <path class="zone" data-zone="restricted-area" data-zone-id="1"
+          d="M210,0 L210,52.5 A40,40 0 0 1 290,52.5 L290,0 Z"></path>
+
+        <path class="zone" data-zone="paint" data-zone-id="2"
+          d="M170,0 L330,0 L330,190 L170,190 Z"></path>
+
+        <path class="zone" data-zone="left-baseline-mid" data-zone-id="3"
+          d="M30,0 L170,0 L170,142 L30,142 Z"></path>
+
+        <path class="zone" data-zone="center-mid" data-zone-id="4"
+          d="M170,190 L330,190 L369.5,258 A237.5,237.5 0 0 1 130.5,258 L170,190 Z"></path>
+
+        <path class="zone" data-zone="right-baseline-mid" data-zone-id="5"
+          d="M330,0 L470,0 L470,142 L330,142 Z"></path>
+
+        <path class="zone" data-zone="left-elbow-mid" data-zone-id="6"
+          d="M170,142 L170,190 L130.5,258 A237.5,237.5 0 0 1 30,142 L170,142 Z"></path>
+
+        <path class="zone" data-zone="right-elbow-mid" data-zone-id="7"
+          d="M330,142 L330,190 L369.5,258 A237.5,237.5 0 0 0 470,142 L330,142 Z"></path>
+
+        <path class="zone" data-zone="left-wing-3" data-zone-id="8"
+          d="M0,142 L30,142 A237.5,237.5 0 0 0 130.5,258 L82.8,340 L0,340 Z"></path>
+
+        <path class="zone" data-zone="top-key-3" data-zone-id="9"
+          d="M130.5,258 A237.5,237.5 0 0 0 369.5,258 L417.2,340 L82.8,340 Z"></path>
+
+        <path class="zone" data-zone="right-wing-3" data-zone-id="10"
+          d="M500,142 L470,142 A237.5,237.5 0 0 1 369.5,258 L417.2,340 L500,340 Z"></path>
+
+        <path class="zone" data-zone="left-corner-3" data-zone-id="11"
+          d="M0,0 L30,0 L30,142 L0,142 Z"></path>
+
+        <path class="zone" data-zone="right-corner-3" data-zone-id="12"
+          d="M470,0 L500,0 L500,142 L470,142 Z"></path>
+
+        <path class="zone" data-zone="deep-3-logo" data-zone-id="13"
+          d="M0,340 L500,340 L500,470 L0,470 Z"></path>
+      </g>
+
+      <g class="labelsNBA">
+        <text class="zone-label" x="250" y="30">RA</text>
+        <text class="zone-label" x="250" y="170">PAINT</text>
+        <text class="zone-label" x="100" y="70">L BASE</text>
+        <text class="zone-label" x="400" y="70">R BASE</text>
+        <text class="zone-label" x="250" y="215">CTR MID</text>
+        <text class="zone-label" x="90" y="210">L ELBOW</text>
+        <text class="zone-label" x="410" y="210">R ELBOW</text>
+        <text class="zone-label" x="15" y="70">L CNR3</text>
+        <text class="zone-label" x="485" y="70">R CNR3</text>
+        <text class="zone-label" x="45" y="270">L WING</text>
+        <text class="zone-label" x="455" y="270">R WING</text>
+        <text class="zone-label" x="250" y="300">TOP KEY</text>
+        <text class="zone-label" x="250" y="410">DEEP / LOGO</text>
+      </g>
+    </svg>
+
+    <!-- ============================================================ -->
+    <!-- HS VERSION — paint 12ft wide, 3PT continuous arc r=19.75ft   -->
+    <!-- ============================================================ -->
+    <svg class="chart-svg" id="chart-hs" viewBox="0 0 500 470" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="cyanGlowHS" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.2" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <rect class="court-fill" x="0" y="0" width="500" height="470"></rect>
+
+      <rect class="court-line" x="1" y="1" width="498" height="468"></rect>
+      <rect class="court-line" x="190" y="0" width="120" height="190"></rect>
+      <circle class="court-line" cx="250" cy="190" r="60" stroke-dasharray="3 4"></circle>
+      <circle class="court-line" cx="250" cy="52.5" r="7.5"></circle>
+      <line class="court-line" x1="220" y1="40" x2="280" y2="40"></line>
+      <line class="court-line" x1="0" y1="470" x2="500" y2="470" stroke-dasharray="3 4"></line>
+      <circle class="court-line" cx="250" cy="470" r="45" stroke-dasharray="3 4"></circle>
+
+      <!-- 13 interactive zones (HS: continuous arc, no straight corner segment) -->
+      <g id="zonesHS">
+        <path class="zone" data-zone="restricted-area" data-zone-id="1"
+          d="M210,0 L210,52.5 A40,40 0 0 1 290,52.5 L290,0 Z"></path>
+
+        <path class="zone" data-zone="paint" data-zone-id="2"
+          d="M190,0 L310,0 L310,190 L190,190 Z"></path>
+
+        <path class="zone" data-zone="left-baseline-mid" data-zone-id="3"
+          d="M59.6,0 L190,0 L190,142 L73.9,142 A197.5,197.5 0 0 1 59.6,0 Z"></path>
+
+        <path class="zone" data-zone="center-mid" data-zone-id="4"
+          d="M190,190 L310,190 L329,233.5 A197.5,197.5 0 0 1 171,233.5 L190,190 Z"></path>
+
+        <path class="zone" data-zone="right-baseline-mid" data-zone-id="5"
+          d="M440.4,0 L310,0 L310,142 L426.1,142 A197.5,197.5 0 0 0 440.4,0 Z"></path>
+
+        <path class="zone" data-zone="left-elbow-mid" data-zone-id="6"
+          d="M190,142 L190,190 L171,233.5 A197.5,197.5 0 0 1 73.9,142 L190,142 Z"></path>
+
+        <path class="zone" data-zone="right-elbow-mid" data-zone-id="7"
+          d="M310,142 L310,190 L329,233.5 A197.5,197.5 0 0 0 426.1,142 L310,142 Z"></path>
+
+        <path class="zone" data-zone="left-wing-3" data-zone-id="8"
+          d="M0,142 L73.9,142 A197.5,197.5 0 0 0 171,233.5 L124.5,340 L0,340 Z"></path>
+
+        <path class="zone" data-zone="top-key-3" data-zone-id="9"
+          d="M171,233.5 A197.5,197.5 0 0 0 329,233.5 L375.5,340 L124.5,340 Z"></path>
+
+        <path class="zone" data-zone="right-wing-3" data-zone-id="10"
+          d="M500,142 L426.1,142 A197.5,197.5 0 0 1 329,233.5 L375.5,340 L500,340 Z"></path>
+
+        <path class="zone" data-zone="left-corner-3" data-zone-id="11"
+          d="M0,0 L59.6,0 A197.5,197.5 0 0 0 73.9,142 L0,142 Z"></path>
+
+        <path class="zone" data-zone="right-corner-3" data-zone-id="12"
+          d="M500,0 L440.4,0 A197.5,197.5 0 0 1 426.1,142 L500,142 Z"></path>
+
+        <path class="zone" data-zone="deep-3-logo" data-zone-id="13"
+          d="M0,340 L500,340 L500,470 L0,470 Z"></path>
+      </g>
+
+      <g class="labelsHS">
+        <text class="zone-label hs-label" x="250" y="28">RA</text>
+        <text class="zone-label hs-label" x="250" y="168">PAINT</text>
+        <text class="zone-label hs-label" x="125" y="42">L BASE</text>
+        <text class="zone-label hs-label" x="375" y="42">R BASE</text>
+        <text class="zone-label hs-label" x="250" y="207">CTR MID</text>
+        <text class="zone-label hs-label" x="140" y="153">L ELBOW</text>
+        <text class="zone-label hs-label" x="360" y="153">R ELBOW</text>
+        <text class="zone-label hs-label" x="30" y="53">L CNR3</text>
+        <text class="zone-label hs-label" x="470" y="53">R CNR3</text>
+        <text class="zone-label hs-label" x="65" y="243">L WING</text>
+        <text class="zone-label hs-label" x="435" y="243">R WING</text>
+        <text class="zone-label hs-label" x="250" y="296">TOP KEY</text>
+        <text class="zone-label hs-label" x="250" y="408">DEEP / LOGO</text>
+      </g>
+    </svg>
+
+  </div>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:var(--cyan-dim);border:1px solid var(--cyan)"></i>untouched</span>
+    <span><i class="swatch" style="background:rgba(0,255,200,0.38);border:1px solid var(--made)"></i>made</span>
+    <span><i class="swatch" style="background:rgba(255,46,106,0.28);border:1px solid var(--missed)"></i>missed</span>
+  </div>
+  <p class="hint">demo only — click cycles untouched → made → missed → untouched</p>
+
+  <div class="code-note">
+    <strong>✓ Integration Complete!</strong><br><br>
+    Your perfect SVG has been integrated as <code>ZoneShotChart.tsx</code> component.<br><br>
+
+    <strong>Next Steps:</strong><br>
+    1. The component supports both NBA and High School court dimensions<br>
+    2. Zones automatically color based on shooting percentage (green = 50%+, orange = 35-49%, red = &lt;35%)<br>
+    3. Hover over zones to see make/attempt stats<br>
+    4. Use it in reports or the film study panel<br><br>
+
+    <strong>Usage Example:</strong><br>
+    <code>&lt;ZoneShotChart events={shotEvents} courtType="highschool" /&gt;</code>
+  </div>
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll('.toggle-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      var target = btn.getAttribute('data-target');
+      document.querySelectorAll('.chart-svg').forEach(s=>s.classList.remove('active'));
+      document.getElementById('chart-' + target).classList.add('active');
+    });
+  });
+
+  var states = ['', 'state-made', 'state-missed'];
+  document.querySelectorAll('.zone').forEach(function(zone){
+    zone.addEventListener('click', function(){
+      var current = states.findIndex(function(s){ return s && zone.classList.contains(s); });
+      states.forEach(function(s){ if (s) zone.classList.remove(s); });
+      var next = states[(current + 1) % states.length];
+      if (next) zone.classList.add(next);
+      // This is where your extension would log: zone.dataset.zone, zone.dataset.zoneId
+    });
+  });
+})();
+</script>
+</body>
+</html>

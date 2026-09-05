@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EventType, Roster, CourtZone, EventTag } from '../types';
-import CourtDiagram from '../components/CourtDiagram';
+import InteractiveZonePicker, { ZONE_LABELS } from '../components/InteractiveZonePicker';
 
 interface EventFormProps {
   eventType: EventType;
@@ -139,28 +139,40 @@ function EventForm({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          background: '#fff',
+          background: 'linear-gradient(135deg, #0a0a0f 0%, #1a0f1f 50%, #1e1b4b 100%)',
           padding: '16px',
           borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 20px rgba(0,255,255,0.3)',
+          border: '1px solid #00ffff',
           zIndex: 10000,
           width: '90%',
-          maxWidth: '450px',
+          maxWidth: '500px',
           maxHeight: '90vh',
           overflowY: 'auto'
         }}
       >
-        <h3 style={{ marginBottom: '12px', fontSize: '16px', textAlign: 'center' }}>
+        <h3 style={{
+          marginBottom: '8px',
+          fontSize: '16px',
+          textAlign: 'center',
+          color: '#d8f9ff',
+          textShadow: '0 0 8px #00ffff'
+        }}>
           {eventType.replace(/_/g, ' ')} @ {formatTimestamp(capturedTimestamp)}
         </h3>
-        <p style={{ marginBottom: '16px', fontSize: '13px', textAlign: 'center', color: '#666' }}>
+        <p style={{
+          marginBottom: '16px',
+          fontSize: '13px',
+          textAlign: 'center',
+          color: '#6f8f95'
+        }}>
           Where did this happen? Click a zone on the court.
         </p>
 
-        <CourtDiagram
+        <InteractiveZonePicker
           onZoneClick={handleZoneSelected}
           selectedZone={selectedZone}
-          mode="select"
+          courtType="highschool"
         />
 
         <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
@@ -168,13 +180,16 @@ function EventForm({
             onClick={onCancel}
             style={{
               flex: 1,
-              padding: '8px',
+              padding: '10px',
               fontSize: '13px',
-              background: '#999',
-              color: 'white',
-              border: 'none',
+              background: 'linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%)',
+              color: '#FCA5A5',
+              border: '2px solid #DC2626',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontWeight: '600',
+              boxShadow: '0 0 12px rgba(220, 38, 38, 0.4)',
+              textShadow: '0 0 6px rgba(252, 165, 165, 0.6)'
             }}
           >
             Cancel
@@ -191,27 +206,43 @@ function EventForm({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background: '#fff',
+        background: 'linear-gradient(135deg, #0a0a0f 0%, #1a0f1f 50%, #1e1b4b 100%)',
         padding: '16px',
         borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        boxShadow: '0 4px 20px rgba(0,255,255,0.3)',
+        border: '1px solid #00ffff',
         zIndex: 10000,
         width: '90%',
         maxWidth: '360px'
       }}
     >
-      <h3 style={{ marginBottom: '12px', fontSize: '14px' }}>
+      <h3 style={{
+        marginBottom: '12px',
+        fontSize: '14px',
+        color: '#d8f9ff',
+        textShadow: '0 0 8px #00ffff'
+      }}>
         {eventType.replace(/_/g, ' ')} @ {formatTimestamp(capturedTimestamp)}
         {selectedZone && selectedZone !== 'unknown' && (
-          <span style={{ color: '#3498db', marginLeft: '8px' }}>
-            ({selectedZone.replace(/_/g, ' ')})
+          <span style={{
+            color: '#00ffc8',
+            marginLeft: '8px',
+            textShadow: '0 0 6px #00ffc8'
+          }}>
+            ({ZONE_LABELS[selectedZone]})
           </span>
         )}
       </h3>
 
       {needsPrimary && (
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+          <label style={{
+            display: 'block',
+            marginBottom: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: '#6f8f95'
+          }}>
             Player (on court only)
           </label>
           <select
@@ -221,8 +252,10 @@ function EventForm({
               width: '100%',
               padding: '6px',
               fontSize: '13px',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
+              border: '1px solid #00ffff',
+              borderRadius: '4px',
+              background: '#12121a',
+              color: '#d8f9ff'
             }}
           >
             <option value="">Select player...</option>
@@ -233,7 +266,12 @@ function EventForm({
             ))}
           </select>
           {onCourtPlayers.length === 0 && (
-            <p style={{ fontSize: '11px', color: '#e74c3c', marginTop: '4px' }}>
+            <p style={{
+              fontSize: '11px',
+              color: '#ff2e6a',
+              marginTop: '4px',
+              textShadow: '0 0 4px #ff2e6a'
+            }}>
               No players on court. Please select players using the On Court toggles above.
             </p>
           )}
@@ -242,7 +280,13 @@ function EventForm({
 
       {needsSecondary && (
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+          <label style={{
+            display: 'block',
+            marginBottom: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: '#6f8f95'
+          }}>
             {eventType === 'ASSIST' ? 'Assisted by (on court)' : 'Secondary Player (on court)'}
           </label>
           <select
@@ -252,8 +296,10 @@ function EventForm({
               width: '100%',
               padding: '6px',
               fontSize: '13px',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
+              border: '1px solid #00ffff',
+              borderRadius: '4px',
+              background: '#12121a',
+              color: '#d8f9ff'
             }}
           >
             <option value="">Select player...</option>
@@ -268,7 +314,13 @@ function EventForm({
 
       {needsOpponent && (
         <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+          <label style={{
+            display: 'block',
+            marginBottom: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: '#6f8f95'
+          }}>
             Opponent Jersey #
           </label>
           <input
@@ -279,8 +331,10 @@ function EventForm({
               width: '100%',
               padding: '6px',
               fontSize: '13px',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
+              border: '1px solid #00ffff',
+              borderRadius: '4px',
+              background: '#12121a',
+              color: '#d8f9ff'
             }}
             placeholder="e.g., 14"
           />
@@ -288,7 +342,13 @@ function EventForm({
       )}
 
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+        <label style={{
+          display: 'block',
+          marginBottom: '4px',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          color: '#6f8f95'
+        }}>
           Comment
         </label>
         <textarea
@@ -298,10 +358,12 @@ function EventForm({
             width: '100%',
             padding: '6px',
             fontSize: '13px',
-            border: '1px solid #ccc',
+            border: '1px solid #00ffff',
             borderRadius: '4px',
             minHeight: '60px',
-            fontFamily: 'inherit'
+            fontFamily: 'inherit',
+            background: '#12121a',
+            color: '#d8f9ff'
           }}
         />
       </div>
@@ -311,14 +373,16 @@ function EventForm({
           onClick={handleSubmit}
           style={{
             flex: 1,
-            padding: '8px',
+            padding: '10px',
             fontSize: '13px',
-            background: '#4CAF50',
-            color: 'white',
-            border: 'none',
+            background: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%)',
+            color: '#C4B5FD',
+            border: '2px solid #8B5CF6',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            boxShadow: '0 0 12px rgba(139, 92, 246, 0.4)',
+            textShadow: '0 0 6px rgba(196, 181, 253, 0.6)'
           }}
         >
           Save
@@ -327,13 +391,16 @@ function EventForm({
           onClick={onCancel}
           style={{
             flex: 1,
-            padding: '8px',
+            padding: '10px',
             fontSize: '13px',
-            background: '#999',
-            color: 'white',
-            border: 'none',
+            background: 'linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%)',
+            color: '#FCA5A5',
+            border: '2px solid #DC2626',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontWeight: '600',
+            boxShadow: '0 0 12px rgba(220, 38, 38, 0.4)',
+            textShadow: '0 0 6px rgba(252, 165, 165, 0.6)'
           }}
         >
           Cancel

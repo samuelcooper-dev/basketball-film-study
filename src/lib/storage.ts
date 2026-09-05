@@ -5,7 +5,9 @@ const STORAGE_KEYS = {
   ROSTER: 'roster',
   GAMES: 'games',
   SETTINGS: 'settings',
-  CURRENT_GAME_ID: 'currentGameId'
+  CURRENT_GAME_ID: 'currentGameId',
+  OUR_TEAM_NAME: 'ourTeamName',
+  ACTIVE_ROSTER: 'activeRoster'
 } as const;
 
 // IndexedDB for FileSystemDirectoryHandle
@@ -91,4 +93,24 @@ export async function saveSettings(settings: AppSettings): Promise<void> {
 export async function getCompletedGames(): Promise<GameSession[]> {
   const games = await getGames();
   return Object.values(games).filter(g => g.status === 'completed');
+}
+
+// Team name persistence
+export async function getOurTeamName(): Promise<string> {
+  const result = await chrome.storage.local.get(STORAGE_KEYS.OUR_TEAM_NAME);
+  return result[STORAGE_KEYS.OUR_TEAM_NAME] || '';
+}
+
+export async function saveOurTeamName(teamName: string): Promise<void> {
+  await chrome.storage.local.set({ [STORAGE_KEYS.OUR_TEAM_NAME]: teamName });
+}
+
+// Active roster (who's dressed tonight) persistence
+export async function getActiveRoster(): Promise<string[]> {
+  const result = await chrome.storage.local.get(STORAGE_KEYS.ACTIVE_ROSTER);
+  return result[STORAGE_KEYS.ACTIVE_ROSTER] || [];
+}
+
+export async function saveActiveRoster(playerIds: string[]): Promise<void> {
+  await chrome.storage.local.set({ [STORAGE_KEYS.ACTIVE_ROSTER]: playerIds });
 }

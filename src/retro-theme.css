@@ -1,0 +1,269 @@
+/* ==========================================================================
+   BASKETBALL WIZARD — RETRO DESIGN SYSTEM
+   NES/16-bit pixel-art aesthetic, palette locked from the official logo art.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  /* ---- Core palette (sampled directly from the wizard logo) ---- */
+  --bw-bg:            #0a0a0f;   /* app background */
+  --bw-bg-panel:      #12101c;  /* card/panel background, slightly lifted */
+  --bw-purple:        #6B3FE0;  /* robe main */
+  --bw-purple-dark:   #3E1F8C;  /* robe shadow */
+  --bw-purple-light:  #9878F8;  /* robe highlight */
+  --bw-gold:          #F5B82E;  /* trim / accent */
+  --bw-cyan:          #3CE6FC;  /* magic glow */
+  --bw-cyan-dim:      rgba(60,230,252,0.15);
+
+  /* ---- Semantic colors ---- */
+  --bw-success:       #4CDB6E;  /* makes / positive stats */
+  --bw-danger:        #FF3B5C;  /* misses / turnovers */
+  --bw-warning:       var(--bw-gold);
+
+  /* ---- Text ---- */
+  --bw-text:          #EDEBFF;
+  --bw-text-dim:      #8C86B8;
+
+  /* ---- Fonts ---- */
+  --bw-font-display: 'Press Start 2P', cursive; /* headers, big numbers only — hard to read small */
+  --bw-font-body:    'VT323', monospace;        /* everything else — reads fine down to 14px */
+
+  /* ---- Pixel border unit (keep all borders/spacing multiples of this) ---- */
+  --bw-px: 4px;
+}
+
+* { box-sizing: border-box; }
+
+body.bw-theme {
+  background: var(--bw-bg);
+  color: var(--bw-text);
+  font-family: var(--bw-font-body);
+  font-size: 18px; /* VT323 renders small, compensate with larger base size */
+  image-rendering: pixelated;
+}
+
+/* ==========================================================================
+   CRT / scanline overlay — apply to a full-screen fixed div, optional
+   ========================================================================== */
+.bw-scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 1px,
+    rgba(0,0,0,0.12) 2px,
+    rgba(0,0,0,0.12) 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   PIXEL BORDER — stepped-corner retro border via layered box-shadow
+   Usage: add class "bw-pixel-border" to any block element
+   ========================================================================== */
+.bw-pixel-border {
+  position: relative;
+  background: var(--bw-bg-panel);
+  border: var(--bw-px) solid #000;
+  box-shadow:
+    0 0 0 var(--bw-px) var(--bw-purple),
+    0 0 0 calc(var(--bw-px) * 2) #000;
+  padding: calc(var(--bw-px) * 3);
+}
+
+.bw-pixel-border.bw-gold {
+  box-shadow:
+    0 0 0 var(--bw-px) var(--bw-gold),
+    0 0 0 calc(var(--bw-px) * 2) #000;
+}
+
+.bw-pixel-border.bw-cyan {
+  box-shadow:
+    0 0 0 var(--bw-px) var(--bw-cyan),
+    0 0 0 calc(var(--bw-px) * 2) #000;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.bw-header {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bw-bg-panel);
+  border-bottom: var(--bw-px) solid var(--bw-gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.bw-header::before {
+  /* subtle animated cyan sparkle glow behind title */
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(circle, var(--bw-cyan-dim) 0%, transparent 60%);
+  animation: bw-pulse 3s ease-in-out infinite;
+}
+
+@keyframes bw-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.08); }
+}
+
+.bw-title {
+  font-family: var(--bw-font-display);
+  font-size: 20px;
+  color: var(--bw-text);
+  text-shadow:
+    3px 3px 0 var(--bw-purple-dark),
+    0 0 12px var(--bw-cyan);
+  letter-spacing: 2px;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.bw-subtitle {
+  font-family: var(--bw-font-body);
+  font-size: 20px;
+  color: var(--bw-cyan);
+  margin-top: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   BUTTONS — arcade-cabinet style, color-coded by event type
+   ========================================================================== */
+.bw-btn {
+  font-family: var(--bw-font-display);
+  font-size: 11px;
+  line-height: 1.6;
+  color: #0a0a0f;
+  background: var(--bw-gold);
+  border: none;
+  padding: 12px 10px;
+  cursor: pointer;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    inset -4px -4px 0 rgba(0,0,0,0.35),
+    inset 4px 4px 0 rgba(255,255,255,0.35),
+    0 4px 0 #000;
+  transition: transform 0.05s ease;
+}
+
+.bw-btn:hover { filter: brightness(1.1); }
+
+.bw-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    inset -4px -4px 0 rgba(0,0,0,0.35),
+    inset 4px 4px 0 rgba(255,255,255,0.25);
+}
+
+/* Event-type color variants */
+.bw-btn.bw-2pt   { background: var(--bw-success); }
+.bw-btn.bw-3pt   { background: var(--bw-cyan); }
+.bw-btn.bw-ast   { background: var(--bw-purple-light); color: #fff; }
+.bw-btn.bw-miss  { background: var(--bw-danger); color: #fff; }
+.bw-btn.bw-tov   { background: #FF7A3C; }
+.bw-btn.bw-reb   { background: var(--bw-gold); }
+
+.bw-btn:disabled {
+  background: #2c2a3a;
+  color: var(--bw-text-dim);
+  box-shadow: 0 4px 0 #000;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   STAT BAR — HP-bar style segmented meter
+   ========================================================================== */
+.bw-statbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--bw-font-body);
+  font-size: 18px;
+  margin: 8px 0;
+}
+
+.bw-statbar-label {
+  width: 70px;
+  color: var(--bw-text-dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.bw-statbar-track {
+  flex: 1;
+  height: 18px;
+  background: #1c1a2a;
+  border: 3px solid #000;
+  box-shadow: 0 0 0 2px var(--bw-purple-dark);
+  padding: 2px;
+  display: flex;
+  gap: 2px;
+}
+
+.bw-statbar-segment {
+  flex: 1;
+  background: #1c1a2a;
+}
+
+.bw-statbar-segment.filled {
+  background: linear-gradient(180deg, var(--bw-cyan) 0%, #1a9db8 100%);
+}
+
+.bw-statbar-segment.filled.warn   { background: linear-gradient(180deg, var(--bw-gold) 0%, #b8860b 100%); }
+.bw-statbar-segment.filled.danger { background: linear-gradient(180deg, var(--bw-danger) 0%, #a3132c 100%); }
+
+.bw-statbar-value {
+  width: 48px;
+  text-align: right;
+  color: var(--bw-gold);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   ACHIEVEMENT BADGE
+   ========================================================================== */
+.bw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--bw-font-body);
+  font-size: 16px;
+  background: var(--bw-bg-panel);
+  border: 3px solid var(--bw-gold);
+  padding: 6px 10px;
+  color: var(--bw-gold);
+  box-shadow: 0 0 8px var(--bw-cyan-dim);
+}
+
+.bw-badge::before { content: '★'; color: var(--bw-cyan); }
+
+/* ==========================================================================
+   PANEL / CARD
+   ========================================================================== */
+.bw-panel {
+  background: var(--bw-bg-panel);
+  border: var(--bw-px) solid #000;
+  box-shadow: 0 0 0 var(--bw-px) var(--bw-purple);
+  padding: 16px;
+}
+
+.bw-panel-title {
+  font-family: var(--bw-font-display);
+  font-size: 12px;
+  color: var(--bw-gold);
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed var(--bw-purple-dark);
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { getSettings, saveSettings, getRoster, getGame } from '../lib/storage';
 import { computeGameStats, gameStatsToSeasonRows } from '../lib/stats';
-import { generateGamePDF } from '../lib/pdf';
+import { generatePDFFromHTML } from '../lib/pdfFromHtml';
 import { seasonStatsToCSV } from '../lib/csv';
 import { generateHTMLReport } from '../lib/htmlReport';
 
@@ -58,7 +58,7 @@ function ExtPage() {
         // Send toggle message to content script
         const response = await chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_PANEL' });
         setPanelVisible(response.visible);
-        setStatus(response.visible ? '✓ Film Study panel opened' : '✓ Film Study panel closed');
+        setStatus(response.visible ? '✓ Basketball Wizard panel opened' : '✓ Basketball Wizard panel closed');
       } catch (messageError) {
         // Content script not loaded - try to inject it
         console.log('Content script not responding, attempting injection...');
@@ -75,7 +75,7 @@ function ExtPage() {
           // Try sending message again
           const response = await chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_PANEL' });
           setPanelVisible(response.visible);
-          setStatus(response.visible ? '✓ Film Study panel opened' : '✓ Film Study panel closed');
+          setStatus(response.visible ? '✓ Basketball Wizard panel opened' : '✓ Basketball Wizard panel closed');
         } catch (injectError) {
           console.error('Failed to inject content script:', injectError);
           setStatus('⚠️ Please refresh the YouTube page and try again');
@@ -111,9 +111,9 @@ function ExtPage() {
       // Generate stats
       const stats = computeGameStats(game, roster);
 
-      // Generate PDF
+      // Generate PDF from HTML templates
       setStatus('Creating PDF...');
-      const pdfBlob = generateGamePDF(game, stats, roster);
+      const pdfBlob = await generatePDFFromHTML(game, roster);
       const opponentSlug = game.opponentName.toLowerCase().replace(/\s+/g, '-');
       const pdfFilename = `game_${game.date}_${opponentSlug}.pdf`;
 
@@ -185,14 +185,14 @@ function ExtPage() {
         paddingBottom: '12px',
         marginBottom: '24px',
         color: '#E9D5FF'
-      }}>⚔️ Film Study Control Panel</h1>
+      }}>🧙 Basketball Wizard Control Panel</h1>
 
       <div style={{ marginTop: '20px' }}>
         <h3 style={{ marginBottom: '12px', fontSize: '16px', color: '#E9D5FF', textShadow: '0 0 10px rgba(139, 92, 246, 0.6)' }}>
-          📜 Film Study Panel
+          📜 Analytics Panel
         </h3>
         <p style={{ fontSize: '13px', color: '#A78BFA', marginBottom: '12px' }}>
-          Open the mystical film study panel on the current YouTube video to track stats.
+          Open the Basketball Wizard panel on the current YouTube video to track stats and generate insights.
         </p>
         <button
           onClick={handleTogglePanel}
@@ -230,7 +230,7 @@ function ExtPage() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          {panelVisible ? '✕ Close Film Study Panel' : '▶ Open Film Study Panel'}
+          {panelVisible ? '✕ Close Basketball Wizard' : '▶ Open Basketball Wizard'}
         </button>
         <p style={{ fontSize: '12px', color: '#6B21A8', fontStyle: 'italic' }}>
           Note: If you get an error, refresh the YouTube page and try again
@@ -317,7 +317,7 @@ function ExtPage() {
         </h4>
         <ol style={{ marginLeft: '20px', lineHeight: '1.8', color: '#8B5CF6' }}>
           <li>Navigate to a basketball game video on YouTube</li>
-          <li>Click the button above to open the Film Study panel</li>
+          <li>Click the button above to open the Basketball Wizard panel</li>
           <li>Set up your team roster and start tracking stats</li>
           <li>When finished, click "End Game" to generate PDF, CSV, and HTML reports</li>
         </ol>

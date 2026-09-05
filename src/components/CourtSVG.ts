@@ -89,18 +89,21 @@ export function generateCourtSVG(
   `;
 }
 
-// Zone center coordinates for plotting (HIGH SCHOOL accurate dimensions)
-// Based on: Court 500x420 units, Scale 10 units/foot, Basket at (250, 380)
+// Zone center coordinates for plotting (13-zone system)
+// Based on: Court 500x470 units, Basket at top (250, 0)
 export const ZONE_CENTERS_ACCURATE: Record<string, { x: number; y: number }> = {
-  paint: { x: 250, y: 305 },                    // Center of paint area
-  midrange_left: { x: 105, y: 270 },            // Left midrange between paint and 3pt
-  midrange_right: { x: 395, y: 270 },           // Right midrange between paint and 3pt
-  corner3_left: { x: 30, y: 320 },              // Left corner 3 area
-  corner3_right: { x: 470, y: 320 },            // Right corner 3 area
-  wing3_left: { x: 155, y: 200 },               // Left wing 3 on the arc
-  wing3_right: { x: 345, y: 200 },              // Right wing 3 on the arc
-  top3: { x: 250, y: 100 },                     // Top of key beyond arc
-  baseline_left: { x: 140, y: 320 },            // Left baseline inside 3pt
-  baseline_right: { x: 360, y: 320 },           // Right baseline inside 3pt
-  unknown: { x: 250, y: 210 }                   // Default center court
+  restricted_area: { x: 250, y: 25 },           // Restricted area at rim
+  paint: { x: 250, y: 95 },                     // Center of paint area
+  left_baseline_mid: { x: 100, y: 70 },         // Left baseline mid-range
+  center_mid: { x: 250, y: 220 },               // Center mid-range (top of key)
+  right_baseline_mid: { x: 400, y: 70 },        // Right baseline mid-range
+  left_elbow_mid: { x: 100, y: 190 },           // Left elbow mid-range
+  right_elbow_mid: { x: 400, y: 190 },          // Right elbow mid-range
+  left_wing_3: { x: 50, y: 240 },               // Left wing 3
+  top_key_3: { x: 250, y: 290 },                // Top of key 3
+  right_wing_3: { x: 450, y: 240 },             // Right wing 3
+  left_corner_3: { x: 15, y: 70 },              // Left corner 3
+  right_corner_3: { x: 485, y: 70 },            // Right corner 3
+  deep_3_logo: { x: 250, y: 405 },              // Deep 3 / Logo
+  unknown: { x: 250, y: 235 }                   // Default center court
 };

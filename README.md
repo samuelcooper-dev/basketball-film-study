@@ -1,8 +1,8 @@
-# Basketball Film Study — YouTube Stat Logger & Report Generator
+# Basketball Wizard — YouTube Stat Logger & Advanced Analytics
 
-Film study shouldn't require a stopwatch, a notebook, manual CSV data entry, and remembering who was on court at every play. This Chrome extension turns any YouTube game video into a full-featured stat-tracking workspace — timestamped events, automatic plus/minus, and one-click PDF + CSV exports.
+Film study shouldn't require a stopwatch, a notebook, manual CSV data entry, and remembering who was on court at every play. This Chrome extension turns any YouTube game video into a full-featured stat-tracking workspace with advanced analytics — timestamped events, automatic plus/minus, interactive 13-zone shot charts with hotzones, defensive analytics, lineup insights, and one-click comprehensive PDF + CSV exports.
 
-**Current capabilities:** Real-time event logging · On-court lineup tracking · Advanced stats (screen assists, deflections, charges, blown coverages) · Auto-generated PDF game reports · Season-long CSV export · All data stored locally, no cloud dependency
+**Current capabilities:** Real-time event logging · Interactive zone-based shot tracking · On-court lineup tracking · Advanced stats (screen assists, deflections, charges, blown coverages) · Offensive & defensive shot charts with hot/cold zones · Lineup analytics · Comprehensive PDF game reports with battle banner · Season-long CSV export · Retro dark fantasy theme · All data stored locally, no cloud dependency
 
 ## The Problem
 
@@ -18,9 +18,18 @@ Film study tools are either enterprise-level ($$$) or require uploading video to
 ## What It Does
 
 - **Timestamped event logging** — Click a button ("2PT Make", "Turnover", etc.) and the video's current timestamp is captured instantly. Add player(s) and a comment, then save.
+- **Interactive zone-based shot tracking** — Click directly on a 13-zone court diagram to log shots. Zones include: restricted area, paint, elbows, wings, corners, baseline mid, top key, and deep 3.
 - **On-court tracking** — Toggle which players are on the floor; lineup changes are recorded with timestamps. Plus/minus is calculated automatically based on who was on-court during scoring events.
 - **Advanced stats** — Screen assists, deflections, charges taken, blown coverages, help defense breakdowns — stats that don't show up in traditional box scores.
-- **PDF game reports** — Box score, advanced stats table, opponent scoring by jersey number, full event timeline, and a problem areas summary (turnovers/breakdowns by player).
+- **Comprehensive PDF game reports** — Professional multi-page reports with battle banner header, featuring:
+  - Team offense shot chart with hot/cold zones (color-coded FG%)
+  - Team defense shot chart (opponent shooting patterns)
+  - Zone efficiency tables with makes/attempts/percentages
+  - Lineup analysis (best/worst lineups by plus/minus)
+  - Player performance cards with shot charts
+  - Full timestamped event timeline
+  - AI-generated insights and coaching recommendations
+  - Retro dark fantasy theme with scanline effects
 - **Season CSV export** — One row per player per game, saved to a local folder. Re-running a game overwrites its rows (allows corrections). Open in Excel/Sheets to pivot for season totals.
 - **Timeline scrubbing** — Click any logged event in the timeline to seek the video to that timestamp. Edit or delete events inline.
 - **File System Access API** — Reports and CSVs are saved directly to a folder you choose (no clunky browser downloads every time).
@@ -39,7 +48,7 @@ Format: `number name`, separated by commas. The extension parses this into a ros
 
 ### 2. Start a Game Session
 
-Navigate to a YouTube game video. The Film Study panel appears as a docked sidebar on the right side of the page.
+Navigate to a YouTube game video. The Basketball Wizard panel appears as a docked sidebar on the right side of the page.
 
 - **Opponent name:** e.g., "Central High"
 - **Game date:** Defaults to today
@@ -93,12 +102,30 @@ Both files are saved to a folder you choose once (via File System Access API).
 
 #### PDF Report Contents
 
-- **Header:** Team name, opponent, date, video URL
-- **Box Score:** Points, FG/3PT/FT makes/attempts, rebounds (off/def), assists, turnovers, steals, blocks, fouls
-- **Advanced Stats:** Plus/minus, screen assists, deflections, charges taken, blown coverages, help D breakdowns
-- **Opponent Scoring:** By jersey number, sorted by points
-- **Event Timeline:** Full play-by-play (timestamp, event, player, comment)
-- **Problem Areas Summary:** Grouped counts of turnovers, blown coverages, and opponent scores by player (makes issues jump out)
+**Page 1: Title Page**
+- Basketball Wizard battle banner
+- Team name vs opponent name
+- Final score display
+- Game date and court format (NBA/High School)
+
+**Page 2: Team Shot Charts & Game Log**
+- **Team Offense Shot Chart:** 13-zone visualization with color-coded FG% (green = hot zones >55%, yellow = average, blue = cold zones <35%)
+- **Team Defense Shot Chart:** Opponent shooting patterns by zone (inverted colors: green = good defense <35% opp FG%)
+- **Zone Stats Table:** Makes-attempts-percentage for all 13 zones
+- **Game Insights:** AI-generated observations about hot zones, defensive weaknesses, scoring trends
+- **Full Event Timeline:** Chronological play-by-play with timestamps, point differential tracking
+
+**Page 3: Lineup Analysis**
+- **Best/Worst Lineups:** Top 5 and bottom 5 five-player combinations by plus/minus
+- **Offensive Lineups:** Highest scoring efficiency lineups
+- **Defensive Lineups:** Best defensive performance lineups
+- **Minutes and possessions tracked per lineup**
+
+**Page 4+: Player Performance Cards**
+- Individual shot charts for each player
+- Box score stats (points, shooting splits, rebounds, assists, etc.)
+- Advanced stats (plus/minus, screen assists, deflections, charges, etc.)
+- Player-specific hot/cold zones
 
 #### Season CSV
 
@@ -119,10 +146,12 @@ If you regenerate a game (edit events and re-export), the extension removes old 
 | UI | React 18 + TypeScript | Shadow DOM mount avoids YouTube CSS conflicts |
 | Build | Vite + `@crxjs/vite-plugin` | Fast dev server, MV3-aware bundling |
 | Storage | `chrome.storage.local` + IndexedDB | Roster/games in chrome.storage; directory handle in IDB (not structured-cloneable) |
-| PDF | jsPDF + jspdf-autotable | Client-side PDF generation, no server needed |
+| PDF | html2pdf.js | HTML to PDF conversion with full CSS support, embedded images |
 | CSV | Papa Parse | Robust CSV parsing/unparsing with type safety |
 | File Access | File System Access API | Write directly to disk without download prompts |
 | Content Injection | Shadow DOM | Panel injected into YouTube without CSS leakage |
+| Analytics | Custom TypeScript | Zone stats, lineup analytics, heatmaps, efficiency calculations |
+| Visualization | SVG + Canvas | Court diagrams, shot charts, zone pickers |
 
 ## Architecture
 
@@ -241,7 +270,7 @@ npm run dev
 ## Local Testing Workflow
 
 1. Navigate to any YouTube video
-2. The Film Study panel appears on the right
+2. The Basketball Wizard panel appears on the right
 3. Set up roster (one-time)
 4. Start a game (opponent name + date)
 5. Toggle 5 players "on court"

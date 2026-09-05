@@ -16,49 +16,77 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${roster.teamName} vs ${game.opponentName} - Film Study Report</title>
+  <title>${roster.teamName} vs ${game.opponentName} - Basketball Wizard Report</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+    :root {
+      --bw-bg: #0a0a0f;
+      --bw-bg-panel: #12101c;
+      --bw-purple: #6B3FE0;
+      --bw-purple-dark: #3E1F8C;
+      --bw-purple-light: #9878F8;
+      --bw-gold: #F5B82E;
+      --bw-cyan: #3CE6FC;
+      --bw-cyan-dim: rgba(60,230,252,0.15);
+      --bw-success: #4CDB6E;
+      --bw-danger: #FF3B5C;
+      --bw-warning: #F5B82E;
+      --bw-text: #EDEBFF;
+      --bw-text-dim: #8C86B8;
+      --bw-font-display: 'Press Start 2P', cursive;
+      --bw-font-body: 'VT323', monospace;
+      --bw-px: 4px;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { background: var(--bw-bg); }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-      background: #0A0A0A;
+      background: var(--bw-bg);
+      color: var(--bw-text);
+      font-family: var(--bw-font-body);
+      font-size: 20px;
       padding: 20px;
-      color: #E0E0E0;
       line-height: 1.6;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 900px;
       margin: 0 auto;
-      background: #1A1A1A;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      background: var(--bw-bg);
+      padding: 0;
     }
 
     /* Header */
+    .battle-banner {
+      width: 100%;
+      display: block;
+      border-bottom: 4px solid var(--bw-gold);
+      margin-bottom: 0;
+    }
+
     h1 {
-      font-size: 36px;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      border-bottom: 3px solid #3B82F6;
-      padding-bottom: 16px;
-      font-weight: 800;
+      font-family: var(--bw-font-display);
+      font-size: 16px;
+      text-align: center;
+      padding: 20px 16px;
+      background: var(--bw-bg-panel);
+      border-bottom: 4px solid var(--bw-gold);
+      text-shadow: 2px 2px 0 var(--bw-purple-dark), 0 0 10px var(--bw-cyan);
+      color: var(--bw-text);
+      margin-bottom: 0;
     }
 
     .game-info {
-      background: #2A2A2A;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 24px 0;
+      background: var(--bw-bg-panel);
+      padding: 16px;
+      margin: 0 0 24px 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      border: 1px solid #333;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      border-bottom: 2px dashed var(--bw-purple-dark);
     }
 
     .info-item {
@@ -68,105 +96,91 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
     }
 
     .info-label {
-      font-size: 11px;
-      color: #888;
+      font-family: var(--bw-font-display);
+      font-size: 9px;
+      color: var(--bw-gold);
       text-transform: uppercase;
-      font-weight: 700;
       letter-spacing: 0.5px;
     }
 
     .info-value {
-      font-size: 24px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-family: var(--bw-font-body);
+      font-size: 20px;
+      color: var(--bw-cyan);
     }
 
     /* Section Headers */
     h2 {
-      font-size: 28px;
-      margin: 48px 0 24px 0;
-      color: #F5F5F5;
-      border-left: 5px solid #3B82F6;
-      padding-left: 16px;
-      font-weight: 700;
+      font-family: var(--bw-font-display);
+      font-size: 12px;
+      color: var(--bw-gold);
+      margin: 24px 16px 12px 16px;
+      text-transform: uppercase;
     }
 
     h3 {
-      font-size: 20px;
-      margin: 32px 0 16px 0;
-      color: #D0D0D0;
-      font-weight: 600;
+      font-family: var(--bw-font-display);
+      font-size: 10px;
+      margin: 20px 16px 12px 16px;
+      color: var(--bw-cyan);
+      text-transform: uppercase;
     }
 
     /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 14px;
-      background: #2A2A2A;
-      border-radius: 8px;
-      overflow: hidden;
+      margin: 16px 0;
+      font-size: 16px;
+      background: var(--bw-bg-panel);
     }
 
     th {
-      background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-      color: white;
-      padding: 14px 12px;
+      background: var(--bw-purple-dark);
+      color: var(--bw-gold);
+      font-family: var(--bw-font-display);
+      font-size: 9px;
+      padding: 10px 8px;
       text-align: left;
-      font-weight: 700;
       text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 0.5px;
+      border: 1px solid var(--bw-purple-dark);
     }
 
     td {
-      padding: 12px;
-      border-bottom: 1px solid #333;
-      color: #D0D0D0;
+      padding: 8px;
+      border: 1px solid var(--bw-purple-dark);
+      color: var(--bw-text);
     }
 
     tr:hover {
-      background: #333;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
+      background: rgba(107,63,224,0.1);
     }
 
     .stat-highlight {
-      background: #3B82F6;
-      color: white;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 4px;
+      background: var(--bw-purple);
+      color: var(--bw-text);
+      padding: 2px 6px;
     }
 
     .good {
-      color: #10B981;
-      font-weight: 700;
+      color: var(--bw-success);
     }
 
     .bad {
-      color: #EF4444;
-      font-weight: 700;
+      color: var(--bw-danger);
     }
 
     .average {
-      color: #F59E0B;
-      font-weight: 700;
+      color: var(--bw-gold);
     }
 
     /* Court Container */
     .court-container {
-      margin: 32px 0;
-      padding: 24px;
-      background: #2A2A2A;
-      border-radius: 12px;
-      border: 1px solid #333;
+      margin: 20px 16px;
+      padding: 16px;
+      background: var(--bw-bg-panel);
+      border: var(--bw-px) solid #000;
+      box-shadow: 0 0 0 var(--bw-px) var(--bw-purple);
     }
 
     .shot-chart {
@@ -178,131 +192,125 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 20px;
-      padding: 16px;
-      background: #1A1A1A;
-      border-radius: 8px;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 12px;
+      font-size: 14px;
+      color: var(--bw-text-dim);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 600;
+      gap: 6px;
+      font-size: 14px;
     }
 
     .legend-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid #fff;
+      width: 12px;
+      height: 12px;
+      border: 1px solid #000;
     }
 
     /* Insights Box */
     .insights {
-      background: linear-gradient(135deg, #1E3A20 0%, #2A2A2A 100%);
-      border-left: 5px solid #10B981;
-      padding: 24px;
-      margin: 24px 0;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
+      background: var(--bw-bg-panel);
+      border: 2px dashed var(--bw-gold);
+      padding: 16px;
+      margin: 20px 16px;
     }
 
     .insights h3 {
-      color: #10B981;
+      color: var(--bw-gold);
       margin-top: 0;
-      margin-bottom: 16px;
-      font-size: 22px;
+      margin-bottom: 12px;
+      font-size: 10px;
     }
 
     .insights ul {
-      margin: 0 0 0 24px;
+      margin: 0 0 0 20px;
       list-style: none;
     }
 
     .insights li {
-      margin: 12px 0;
-      line-height: 1.8;
+      margin: 8px 0;
+      line-height: 1.6;
       position: relative;
       padding-left: 8px;
     }
 
     .insights li::before {
-      content: "▸";
+      content: "★";
       position: absolute;
       left: -16px;
-      color: #10B981;
-      font-weight: bold;
+      color: var(--bw-cyan);
     }
 
     /* Player Grid */
     .player-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 24px;
-      margin: 32px 0;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 20px 16px;
     }
 
     .player-card {
-      background: #2A2A2A;
-      border: 1px solid #3B82F6;
-      border-radius: 12px;
+      background: var(--bw-bg-panel);
+      border: var(--bw-px) solid #000;
+      box-shadow: 0 0 0 var(--bw-px) var(--bw-purple);
       padding: 0;
       overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .player-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 0 0 var(--bw-px) var(--bw-cyan);
     }
 
     .player-header {
-      background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-      color: white;
-      padding: 16px;
-      font-size: 20px;
-      font-weight: 800;
+      background: var(--bw-purple-dark);
+      color: var(--bw-gold);
+      padding: 12px;
+      font-family: var(--bw-font-display);
+      font-size: 11px;
+      text-transform: uppercase;
     }
 
     .player-body {
-      padding: 20px;
+      padding: 12px;
     }
 
     /* Charts Section */
     .charts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 24px;
-      margin: 32px 0;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin: 20px 16px;
     }
 
     .chart-card {
-      background: #2A2A2A;
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid #333;
+      background: var(--bw-bg-panel);
+      border: var(--bw-px) solid #000;
+      box-shadow: 0 0 0 var(--bw-px) var(--bw-purple);
+      padding: 16px;
     }
 
     /* Footer */
     .footer {
-      margin-top: 64px;
-      padding-top: 32px;
-      border-top: 2px solid #333;
+      margin-top: 40px;
+      padding: 20px 16px;
+      border-top: 2px dashed var(--bw-purple-dark);
       text-align: center;
-      color: #666;
-      font-size: 13px;
+      color: var(--bw-text-dim);
+      font-size: 14px;
     }
 
     .footer a {
-      color: #3B82F6;
+      color: var(--bw-cyan);
       text-decoration: none;
     }
 
     .footer a:hover {
-      text-decoration: underline;
+      color: var(--bw-gold);
     }
 
     /* Print Styles */
@@ -312,16 +320,17 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
         padding: 0;
       }
       .container {
-        box-shadow: none;
         background: white;
         color: black;
       }
       h1, h2, h3 {
         color: black;
+        text-shadow: none;
       }
       .game-info, .court-container, .chart-card, .player-card {
         background: white;
         border: 1px solid #ccc;
+        box-shadow: none;
       }
       .insights {
         background: #f0f0f0;
@@ -331,7 +340,8 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
 </head>
 <body>
   <div class="container">
-    <h1>${roster.teamName} Film Study Report</h1>
+    <img class="battle-banner" src="./public/battle-banner.png" alt="Basketball Wizard Banner" />
+    <h1>${roster.teamName} Basketball Wizard Report</h1>
 
     <div class="game-info">
       <div class="info-item">
@@ -359,7 +369,7 @@ export function generateHTMLReport(game: GameSession, roster: Roster): string {
     ${generatePlayerReportsSection(analytics, game, roster)}
 
     <div class="footer">
-      Generated by Basketball Film Study Extension • ${new Date().toLocaleString()}
+      Generated by Basketball Wizard • ${new Date().toLocaleString()}
     </div>
   </div>
 </body>
@@ -391,29 +401,29 @@ function generateTeamOffenseSection(analytics: TeamAnalytics): string {
     <h2>🏀 Team Offensive Performance</h2>
 
     <div class="court-container">
-      <h3 style="text-align: center; margin-bottom: 16px; color: #F5F5F5;">Shot Heat Map</h3>
+      <h3 style="text-align: center; margin-bottom: 12px;">Shot Heat Map</h3>
       <div class="shot-chart">
         ${shotChart}
       </div>
       <div class="legend">
         <div class="legend-item">
-          <div class="legend-dot" style="background: #EF4444;"></div>
+          <div class="legend-dot" style="background: #4CDB6E;"></div>
           <span>Hot (≥65%)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-dot" style="background: #F59E0B;"></div>
+          <div class="legend-dot" style="background: #3CE6FC;"></div>
           <span>Good (55-65%)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-dot" style="background: #FCD34D;"></div>
+          <div class="legend-dot" style="background: #F5B82E;"></div>
           <span>Average (45-55%)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-dot" style="background: #34D399;"></div>
+          <div class="legend-dot" style="background: #9878F8;"></div>
           <span>Below Avg (35-45%)</span>
         </div>
         <div class="legend-item">
-          <div class="legend-dot" style="background: #60A5FA;"></div>
+          <div class="legend-dot" style="background: #FF3B5C;"></div>
           <span>Cold (<35%)</span>
         </div>
       </div>
@@ -601,8 +611,8 @@ function generatePlayerReportsSection(analytics: TeamAnalytics, game: GameSessio
             #${pStats.playerNumber} ${pStats.playerName}
           </div>
           <div class="player-body">
-            <h4 style="margin: 12px 0 8px 0; color: #F5F5F5;">Offensive Stats</h4>
-            <table style="font-size: 13px; background: #1A1A1A;">
+            <h4 style="margin: 12px 0 8px 0; color: var(--bw-cyan); font-family: var(--bw-font-display); font-size: 9px; text-transform: uppercase;">Offensive Stats</h4>
+            <table style="font-size: 14px;">
               <tr>
                 <td>FGM-FGA</td>
                 <td><strong>${pStats.totalStats.fgm}-${pStats.totalStats.fga}</strong></td>
@@ -623,8 +633,8 @@ function generatePlayerReportsSection(analytics: TeamAnalytics, game: GameSessio
               </tr>
             </table>
 
-            <h4 style="margin: 12px 0 8px 0; color: #F5F5F5;">Defensive Stats</h4>
-            <table style="font-size: 13px; background: #1A1A1A;">
+            <h4 style="margin: 12px 0 8px 0; color: var(--bw-cyan); font-family: var(--bw-font-display); font-size: 9px; text-transform: uppercase;">Defensive Stats</h4>
+            <table style="font-size: 14px;">
               <tr>
                 <td>Steals</td>
                 <td colspan="2" class="${pStats.totalStats.steals > 0 ? 'good' : ''}">${pStats.totalStats.steals || '-'}</td>
@@ -660,11 +670,11 @@ function generatePlayerHotColdZones(pStats: any): string {
   let html = '<div style="margin-top: 12px; font-size: 12px; padding: 8px; background: #1A1A1A; border-radius: 6px;">';
 
   if (hot.length > 0) {
-    html += `<div style="color: #10B981; font-weight: 600; margin-bottom: 4px;">🔥 Hot Zones: ${hot.map((z: any) => ZONE_LABELS[z[0] as CourtZone]).join(', ')}</div>`;
+    html += `<div style="color: var(--bw-success); margin-bottom: 4px;">🔥 Hot Zones: ${hot.map((z: any) => ZONE_LABELS[z[0] as CourtZone]).join(', ')}</div>`;
   }
 
   if (cold.length > 0) {
-    html += `<div style="color: #EF4444; font-weight: 600;">❄️ Cold Zones: ${cold.map((z: any) => ZONE_LABELS[z[0] as CourtZone]).join(', ')}</div>`;
+    html += `<div style="color: var(--bw-danger);">❄️ Cold Zones: ${cold.map((z: any) => ZONE_LABELS[z[0] as CourtZone]).join(', ')}</div>`;
   }
 
   html += '</div>';
@@ -675,7 +685,7 @@ function generateLineupAnalysisSection(lineupStats: any[]): string {
   if (lineupStats.length === 0) {
     return `
       <h2>🏀 Lineup Analysis</h2>
-      <p style="color: #999; font-style: italic;">
+      <p style="color: var(--bw-text-dim); font-style: italic; margin: 0 16px;">
         No lineup data available. Make sure to select 5 players on court before logging events.
       </p>
     `;
@@ -688,7 +698,7 @@ function generateLineupAnalysisSection(lineupStats: any[]): string {
 
   return `
     <h2>🏀 Lineup Analysis</h2>
-    <p style="color: #AAA; font-size: 13px; margin-bottom: 20px;">
+    <p style="color: var(--bw-text-dim); font-size: 16px; margin: 0 16px 16px 16px;">
       Stats normalized to per-100-possessions. Minimum 5 possessions to qualify.
     </p>
 

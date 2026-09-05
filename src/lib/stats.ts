@@ -24,7 +24,6 @@ export function computeGameStats(game: GameSession, roster: Roster): GameStats {
       steals: 0,
       blocks: 0,
       fouls: 0,
-      screenAssists: 0,
       deflections: 0,
       chargesTaken: 0,
       blownCoverages: 0,
@@ -125,9 +124,6 @@ export function computeGameStats(game: GameSession, roster: Roster): GameStats {
         if (primaryStats) primaryStats.fouls += 1;
         break;
 
-      case 'SCREEN_ASSIST':
-        if (primaryStats) primaryStats.screenAssists += 1;
-        break;
 
       case 'DEFLECTION':
         if (primaryStats) primaryStats.deflections += 1;
@@ -246,7 +242,6 @@ export function gameStatsToSeasonRows(
     stl: ps.steals,
     blk: ps.blocks,
     fouls: ps.fouls,
-    screen_ast: ps.screenAssists,
     deflections: ps.deflections,
     charges: ps.chargesTaken,
     blown_coverage: ps.blownCoverages,

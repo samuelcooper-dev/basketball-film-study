@@ -11,16 +11,19 @@ interface CourtDiagramProps {
 }
 
 const ZONE_LABELS: Record<CourtZone, string> = {
+  restricted_area: 'Restricted Area',
   paint: 'Paint',
-  midrange_left: 'Mid L',
-  midrange_right: 'Mid R',
-  corner3_left: 'C3 L',
-  corner3_right: 'C3 R',
-  wing3_left: 'W3 L',
-  wing3_right: 'W3 R',
-  top3: 'Top 3',
-  baseline_left: 'Base L',
-  baseline_right: 'Base R',
+  left_baseline_mid: 'Left Baseline Mid',
+  center_mid: 'Center Mid-Range',
+  right_baseline_mid: 'Right Baseline Mid',
+  left_elbow_mid: 'Left Elbow',
+  right_elbow_mid: 'Right Elbow',
+  left_wing_3: 'Left Wing 3',
+  top_key_3: 'Top of Key 3',
+  right_wing_3: 'Right Wing 3',
+  left_corner_3: 'Left Corner 3',
+  right_corner_3: 'Right Corner 3',
+  deep_3_logo: 'Deep 3 / Logo',
   unknown: 'Unknown'
 };
 

@@ -14,21 +14,24 @@ export type EventType =
   | "FT_MAKE" | "FT_MISS"
   | "REB_OFF" | "REB_DEF"
   | "ASSIST" | "TURNOVER" | "STEAL" | "BLOCK" | "FOUL"
-  | "SCREEN_ASSIST" | "DEFLECTION" | "CHARGE_TAKEN" | "BLOWN_COVERAGE" | "HELP_D_BREAKDOWN"
+  | "DEFLECTION" | "CHARGE_TAKEN" | "BLOWN_COVERAGE" | "HELP_D_BREAKDOWN"
   | "OPP_SCORE_2" | "OPP_SCORE_3" | "OPP_SCORE_FT"
   | "CUSTOM";
 
 export type CourtZone =
+  | 'restricted_area'
   | 'paint'
-  | 'midrange_left'
-  | 'midrange_right'
-  | 'corner3_left'
-  | 'corner3_right'
-  | 'wing3_left'
-  | 'wing3_right'
-  | 'top3'
-  | 'baseline_left'
-  | 'baseline_right'
+  | 'left_baseline_mid'
+  | 'center_mid'
+  | 'right_baseline_mid'
+  | 'left_elbow_mid'
+  | 'right_elbow_mid'
+  | 'left_wing_3'
+  | 'top_key_3'
+  | 'right_wing_3'
+  | 'left_corner_3'
+  | 'right_corner_3'
+  | 'deep_3_logo'
   | 'unknown';
 
 export type EventTag =
@@ -71,6 +74,7 @@ export interface GameSession {
   opponentName: string;
   videoUrl: string;
   videoId: string;
+  courtType?: 'nba' | 'highschool';
   events: GameEvent[];
   lineupHistory: LineupChange[];
   status: "in_progress" | "completed";
@@ -94,7 +98,6 @@ export interface PlayerGameStats {
   steals: number;
   blocks: number;
   fouls: number;
-  screenAssists: number;
   deflections: number;
   chargesTaken: number;
   blownCoverages: number;

@@ -7,66 +7,69 @@ interface EventButtonsProps {
 
 const EVENT_GROUPS = {
   'Scoring (Ours)': [
-    { type: '2PT_MAKE' as EventType, label: '2PT Make', color: '#4CAF50' },
-    { type: '2PT_MISS' as EventType, label: '2PT Miss', color: '#FF9800' },
-    { type: '3PT_MAKE' as EventType, label: '3PT Make', color: '#2196F3' },
-    { type: '3PT_MISS' as EventType, label: '3PT Miss', color: '#FF9800' },
-    { type: 'FT_MAKE' as EventType, label: 'FT Make', color: '#9C27B0' },
-    { type: 'FT_MISS' as EventType, label: 'FT Miss', color: '#FF9800' }
+    { type: '2PT_MAKE' as EventType, label: '2PT Make', variant: 'bw-2pt' },
+    { type: '2PT_MISS' as EventType, label: '2PT Miss', variant: 'bw-miss' },
+    { type: '3PT_MAKE' as EventType, label: '3PT Make', variant: 'bw-3pt' },
+    { type: '3PT_MISS' as EventType, label: '3PT Miss', variant: 'bw-miss' },
+    { type: 'FT_MAKE' as EventType, label: 'FT Make', variant: 'bw-2pt' },
+    { type: 'FT_MISS' as EventType, label: 'FT Miss', variant: 'bw-miss' }
   ],
   'Ball Movement / Defense': [
-    { type: 'ASSIST' as EventType, label: 'Assist', color: '#009688' },
-    { type: 'REB_OFF' as EventType, label: 'Reb (Off)', color: '#795548' },
-    { type: 'REB_DEF' as EventType, label: 'Reb (Def)', color: '#795548' },
-    { type: 'STEAL' as EventType, label: 'Steal', color: '#3F51B5' },
-    { type: 'BLOCK' as EventType, label: 'Block', color: '#3F51B5' },
-    { type: 'TURNOVER' as EventType, label: 'Turnover', color: '#f44336' },
-    { type: 'FOUL' as EventType, label: 'Foul', color: '#f44336' }
+    { type: 'ASSIST' as EventType, label: 'Assist', variant: 'bw-ast' },
+    { type: 'REB_OFF' as EventType, label: 'Reb (Off)', variant: 'bw-reb' },
+    { type: 'REB_DEF' as EventType, label: 'Reb (Def)', variant: 'bw-reb' },
+    { type: 'STEAL' as EventType, label: 'Steal', variant: 'bw-3pt' },
+    { type: 'BLOCK' as EventType, label: 'Block', variant: 'bw-3pt' },
+    { type: 'TURNOVER' as EventType, label: 'Turnover', variant: 'bw-tov' },
+    { type: 'FOUL' as EventType, label: 'Foul', variant: 'bw-miss' }
   ],
   'Advanced': [
-    { type: 'SCREEN_ASSIST' as EventType, label: 'Screen Ast', color: '#607D8B' },
-    { type: 'DEFLECTION' as EventType, label: 'Deflection', color: '#607D8B' },
-    { type: 'CHARGE_TAKEN' as EventType, label: 'Charge', color: '#607D8B' },
-    { type: 'BLOWN_COVERAGE' as EventType, label: 'Blown Cov', color: '#E91E63' },
-    { type: 'HELP_D_BREAKDOWN' as EventType, label: 'Help D Fail', color: '#E91E63' }
+    { type: 'DEFLECTION' as EventType, label: 'Deflection', variant: 'bw-3pt' },
+    { type: 'CHARGE_TAKEN' as EventType, label: 'Charge', variant: 'bw-reb' },
+    { type: 'BLOWN_COVERAGE' as EventType, label: 'Blown Cov', variant: 'bw-miss' },
+    { type: 'HELP_D_BREAKDOWN' as EventType, label: 'Help D Fail', variant: 'bw-miss' }
   ],
   'Opponent': [
-    { type: 'OPP_SCORE_2' as EventType, label: 'Opp 2PT', color: '#9E9E9E' },
-    { type: 'OPP_SCORE_3' as EventType, label: 'Opp 3PT', color: '#9E9E9E' },
-    { type: 'OPP_SCORE_FT' as EventType, label: 'Opp FT', color: '#9E9E9E' }
+    { type: 'OPP_SCORE_2' as EventType, label: 'Opp 2PT', variant: '' },
+    { type: 'OPP_SCORE_3' as EventType, label: 'Opp 3PT', variant: '' },
+    { type: 'OPP_SCORE_FT' as EventType, label: 'Opp FT', variant: '' }
   ],
   'Other': [
-    { type: 'CUSTOM' as EventType, label: '+ Custom', color: '#000' }
+    { type: 'CUSTOM' as EventType, label: '+ Custom', variant: '' }
   ]
 };
 
 function EventButtons({ onEventClick }: EventButtonsProps) {
   return (
     <div style={{ marginBottom: '16px' }}>
-      <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#666' }}>
+      <div style={{
+        fontFamily: 'var(--bw-font-display)',
+        fontSize: '10px',
+        marginBottom: '12px',
+        color: 'var(--bw-gold)',
+        textTransform: 'uppercase',
+        letterSpacing: '1px'
+      }}>
         Log Event
       </div>
 
       {Object.entries(EVENT_GROUPS).map(([groupName, buttons]) => (
-        <div key={groupName} style={{ marginBottom: '12px' }}>
-          <div style={{ fontSize: '11px', color: '#999', marginBottom: '4px' }}>
+        <div key={groupName} style={{ marginBottom: '16px' }}>
+          <div style={{
+            fontFamily: 'var(--bw-font-body)',
+            fontSize: '14px',
+            color: 'var(--bw-text-dim)',
+            marginBottom: '8px',
+            textTransform: 'uppercase'
+          }}>
             {groupName}
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {buttons.map(btn => (
               <button
                 key={btn.type}
                 onClick={() => onEventClick(btn.type)}
-                style={{
-                  padding: '6px 10px',
-                  fontSize: '11px',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  background: btn.color,
-                  color: '#fff',
-                  fontWeight: 'bold'
-                }}
+                className={`bw-btn ${btn.variant}`}
               >
                 {btn.label}
               </button>

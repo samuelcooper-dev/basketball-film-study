@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(du:*)",
+      "Bash(where brave)",
+      "Bash(start brave.exe:*)",
+      "WebSearch",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "WebFetch(domain:codepen.io)",
+      "WebFetch(domain:www.svgviewer.dev)",
+      "WebFetch(domain:github.com)",
+      "Bash(start brave --load-extension=\"C:\\\\Users\\\\sampc\\\\basketball-film-tool\\\\dist\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.dailythunder.com)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "mcp__claude_ai_typeui__typeui_check_access",
+      "WebFetch(domain:freesvg.org)",
+      "WebFetch(domain:www.detroitbadboys.com)",
+      "WebFetch(domain:cdn3.sbnation.com)",
+      "WebFetch(domain:apidocs.sportradar.com)",
+      "Bash(ls \"C:/Users/sampc/Downloads\"/*.{md,txt,pdf,html})",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(dir \"C:\\\\Users\\\\sampc\\\\Downloads\" /s /b)",
+      "Bash(findstr:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
